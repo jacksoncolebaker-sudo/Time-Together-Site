@@ -56,6 +56,8 @@ const globalCSS = `
   ::-webkit-scrollbar-thumb { background: ${TEXT_MUTED}; border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: ${AMBER}; }
 
+  nav > div:nth-child(2)::-webkit-scrollbar { display: none; }
+
   @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(30px); }
     to { opacity: 1; transform: translateY(0); }
@@ -85,12 +87,17 @@ const globalCSS = `
     100% { background-position: 200% 0; }
   }
   @keyframes logoGlow {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 0.6; transform: scale(1.05); }
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
   }
   @keyframes logoGlow2 {
-    0%, 100% { opacity: 0.15; transform: scale(1.1); }
-    50% { opacity: 0.35; transform: scale(1.2); }
+    0%, 100% { opacity: 0.3; transform: scale(1.05); }
+    50% { opacity: 0.7; transform: scale(1.25); }
+  }
+  @keyframes logoGlow3 {
+    0%, 100% { opacity: 0.4; transform: scale(1.02) rotate(-1deg); }
+    33% { opacity: 0.8; transform: scale(1.1) rotate(0.5deg); }
+    66% { opacity: 0.5; transform: scale(1.06) rotate(-0.5deg); }
   }
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
@@ -138,25 +145,25 @@ function Nav({ currentPage, setPage }) {
   return (
     <nav style={{
       position: "fixed", top: 0, left: 0, right: 0, zIndex: 1000,
-      padding: scrolled ? "12px 32px" : "20px 32px",
+      padding: scrolled ? "12px 16px" : "20px 16px",
       background: scrolled ? "rgba(10,10,10,0.92)" : "transparent",
       backdropFilter: scrolled ? "blur(20px)" : "none",
       borderBottom: scrolled ? `1px solid ${BORDER}` : "1px solid transparent",
       transition: "all 0.4s ease",
-      display: "flex", alignItems: "center", justifyContent: "space-between",
+      display: "flex", alignItems: "center", gap: "24px",
     }}>
       <div
         onClick={() => { setPage("home"); setMobileOpen(false); }}
-        style={{ cursor: "pointer", display: "flex", alignItems: "center", mixBlendMode: "screen" }}
+        style={{ cursor: "pointer", display: "flex", alignItems: "center", mixBlendMode: "screen", flexShrink: 0 }}
       >
         <img src={LOGO_PEOPLE} alt="Time Together" style={{
-          height: "36px", width: "auto",
+          height: "32px", width: "auto",
           filter: "brightness(1.1) contrast(2.5)",
         }} />
       </div>
 
-      {/* Desktop nav */}
-      <div style={{ display: "flex", gap: "32px", alignItems: "center" }}>
+      {/* Nav items - scrollable on mobile */}
+      <div style={{ display: "flex", gap: "20px", alignItems: "center", overflowX: "auto", overflowY: "hidden", whiteSpace: "nowrap", msOverflowStyle: "none", scrollbarWidth: "none" }}>
         {navItems.map((item) => (
           <button
             key={item.id}
@@ -167,7 +174,7 @@ function Nav({ currentPage, setPage }) {
               letterSpacing: "2px", textTransform: "uppercase",
               color: currentPage === item.id ? AMBER : TEXT_DIM,
               transition: "color 0.3s ease",
-              position: "relative", padding: "4px 0",
+              position: "relative", padding: "4px 0", flexShrink: 0,
             }}
             onMouseEnter={(e) => e.target.style.color = AMBER_LIGHT}
             onMouseLeave={(e) => e.target.style.color = currentPage === item.id ? AMBER : TEXT_DIM}
@@ -191,6 +198,34 @@ function HomePage({ setPage }) {
   const [loaded, setLoaded] = useState(false);
   const canvasRef = useRef(null);
   const animRef = useRef(null);
+  const [transparentLogo, setTransparentLogo] = useState(null);
+
+  // Process the wordmark logo to remove black background
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const c = document.createElement("canvas");
+      c.width = img.width;
+      c.height = img.height;
+      const ctx = c.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      const imageData = ctx.getImageData(0, 0, c.width, c.height);
+      const data = imageData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i + 1], b = data[i + 2];
+        const brightness = (r + g + b) / 3;
+        if (brightness < 60) {
+          data[i + 3] = 0;
+        } else {
+          data[i + 3] = Math.min(255, Math.floor(brightness * 2.5));
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
+      setTransparentLogo(c.toDataURL());
+    };
+    img.src = LOGO_WORDMARK;
+  }, []);
 
   useEffect(() => { setTimeout(() => setLoaded(true), 100); }, []);
 
@@ -311,37 +346,51 @@ function HomePage({ setPage }) {
           background: `radial-gradient(ellipse at center, transparent 25%, ${BG_DARK} 85%)`,
         }} />
 
-        {/* Outer soft radial glow - slow pulse */}
+        {/* Outer wide glow - slow breathe */}
         <div style={{
           position: "absolute",
-          width: "60%", height: "40%",
-          background: "radial-gradient(ellipse at center, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 40%, transparent 70%)",
+          width: "clamp(500px, 80vw, 900px)", height: "clamp(280px, 45vh, 500px)",
+          background: "radial-gradient(ellipse at center, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.08) 30%, rgba(255,255,255,0.02) 55%, transparent 75%)",
           animation: "logoGlow2 6s ease-in-out infinite",
           pointerEvents: "none",
         }} />
-        {/* Inner concentrated glow - faster pulse */}
+        {/* Mid glow - medium pulse */}
         <div style={{
           position: "absolute",
-          width: "45%", height: "30%",
-          background: "radial-gradient(ellipse at center, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.06) 35%, transparent 65%)",
-          animation: "logoGlow 4s ease-in-out infinite",
+          width: "clamp(380px, 60vw, 700px)", height: "clamp(200px, 30vh, 350px)",
+          background: "radial-gradient(ellipse at center, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 30%, transparent 65%)",
+          animation: "logoGlow3 8s ease-in-out infinite",
           pointerEvents: "none",
         }} />
-        {/* Blurred duplicate of logo for soft halo */}
-        <img src={LOGO_WORDMARK} alt="" style={{
+        {/* Inner tight glow - fast pulse */}
+        <div style={{
           position: "absolute",
-          width: "clamp(280px, 50vw, 550px)", height: "auto",
-          filter: "brightness(1.5) contrast(2.5) blur(20px)",
-          mixBlendMode: "screen",
+          width: "clamp(300px, 50vw, 580px)", height: "clamp(150px, 22vh, 260px)",
+          background: "radial-gradient(ellipse at center, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 35%, transparent 60%)",
+          animation: "logoGlow 3.5s ease-in-out infinite",
+          pointerEvents: "none",
+        }} />
+        {/* Extra blurred logo copy for halo */}
+        {transparentLogo && <img src={transparentLogo} alt="" style={{
+          position: "absolute",
+          width: "clamp(320px, 55vw, 600px)", height: "auto",
+          filter: "blur(35px) brightness(1.5)",
           animation: "logoGlow 5s ease-in-out infinite",
           pointerEvents: "none",
-        }} />
+        }} />}
+        {/* Medium blurred logo copy */}
+        {transparentLogo && <img src={transparentLogo} alt="" style={{
+          position: "absolute",
+          width: "clamp(290px, 52vw, 560px)", height: "auto",
+          filter: "blur(12px) brightness(1.3)",
+          animation: "logoGlow3 7s ease-in-out infinite",
+          pointerEvents: "none",
+        }} />}
         {/* Sharp wordmark logo */}
-        <img src={LOGO_WORDMARK} alt="Time Together" style={{
+        {transparentLogo && <img src={transparentLogo} alt="Time Together" style={{
           width: "clamp(280px, 50vw, 550px)", height: "auto",
-          filter: "brightness(1.1) contrast(2.5)",
-          mixBlendMode: "screen",
-        }} />
+          filter: "drop-shadow(0 0 40px rgba(255,255,255,0.5)) drop-shadow(0 0 80px rgba(255,255,255,0.25)) drop-shadow(0 0 120px rgba(255,255,255,0.1))",
+        }} />}
 
         {/* Scroll indicator */}
         <div style={{
@@ -481,9 +530,9 @@ function EventsPage() {
             <div
               key={i}
               style={{
-                display: "grid", gridTemplateColumns: "100px 1fr auto",
-                gap: "32px", alignItems: "center",
-                padding: "32px 24px", background: BG_CARD,
+                display: "flex", flexWrap: "wrap", alignItems: "center",
+                gap: "16px",
+                padding: "24px 20px", background: BG_CARD,
                 border: `1px solid ${BORDER}`, borderRadius: "2px",
                 cursor: "pointer", transition: "all 0.3s ease",
                 animation: `fadeInUp 0.6s ease ${i * 0.1}s both`,
@@ -497,7 +546,7 @@ function EventsPage() {
                 e.currentTarget.style.background = BG_CARD;
               }}
             >
-              <div>
+              <div style={{ minWidth: "80px" }}>
                 <div style={{
                   fontFamily: "'Bebas Neue', sans-serif", fontSize: "32px",
                   letterSpacing: "2px", color: AMBER, lineHeight: 1,
@@ -507,7 +556,7 @@ function EventsPage() {
                   color: TEXT_MUTED, letterSpacing: "2px", marginTop: "4px",
                 }}>{evt.date.split(" ")[0]} · {evt.day}</div>
               </div>
-              <div>
+              <div style={{ flex: "1 1 200px" }}>
                 <h3 style={{
                   fontFamily: "'Bebas Neue', sans-serif", fontSize: "22px",
                   letterSpacing: "2px", color: TEXT_PRIMARY,
@@ -528,7 +577,7 @@ function EventsPage() {
                 letterSpacing: "3px", color: BG_DARK, textDecoration: "none",
                 textTransform: "uppercase", background: AMBER,
                 padding: "10px 20px", borderRadius: "1px",
-                transition: "background 0.3s",
+                transition: "background 0.3s", flexShrink: 0,
               }}
               onMouseEnter={(e) => e.target.style.background = AMBER_LIGHT}
               onMouseLeave={(e) => e.target.style.background = AMBER}

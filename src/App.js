@@ -119,6 +119,10 @@ const globalCSS = `
     50% { transform: scale(1.22) skewX(0.5deg) translate(-5px, 6px); }
     100% { transform: scale(1.2) skewX(-0.5deg) translate(3px, -4px); }
   }
+  @keyframes dateGlow {
+    0%, 100% { opacity: 0.18; text-shadow: 0 0 8px rgba(139,26,26,0.3); }
+    50% { opacity: 0.3; text-shadow: 0 0 20px rgba(139,26,26,0.6), 0 0 40px rgba(139,26,26,0.2); }
+  }
 `;
 
 // ─── NAV ───
@@ -461,7 +465,8 @@ function HomePage({ setPage }) {
           <span style={{
             position: "absolute", top: "48px", right: "48px",
             fontFamily: "'Lato', sans-serif", fontSize: "64px",
-            color: `rgba(139,26,26,0.08)`, lineHeight: 1,
+            color: `rgba(139,26,26,0.25)`, lineHeight: 1,
+            animation: "dateGlow 3s ease-in-out infinite",
           }}>{UPCOMING_EVENTS[0].date.split(" ")[0]}</span>
         </div>
       </div>

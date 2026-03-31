@@ -119,6 +119,10 @@ const globalCSS = `
     50% { transform: scale(1.22) skewX(0.5deg) translate(-5px, 6px); }
     100% { transform: scale(1.2) skewX(-0.5deg) translate(3px, -4px); }
   }
+  @keyframes logoScatter {
+    0%, 100% { opacity: 0; }
+    50% { opacity: 0.15; }
+  }
   @keyframes dateGlow {
     0%, 100% { opacity: 0.5; text-shadow: 0 0 12px rgba(139,26,26,0.5), 0 0 30px rgba(139,26,26,0.3); }
     50% { opacity: 0.75; text-shadow: 0 0 25px rgba(139,26,26,0.8), 0 0 50px rgba(139,26,26,0.4), 0 0 80px rgba(139,26,26,0.2); }
@@ -201,6 +205,17 @@ function HomePage({ setPage }) {
   const canvasRef = useRef(null);
   const animRef = useRef(null);
   const [transparentLogo, setTransparentLogo] = useState(null);
+  const [transparentPeople, setTransparentPeople] = useState(null);
+  const [scatterItems] = useState(() =>
+    Array.from({ length: 18 }, () => ({
+      top: Math.random() * 90,
+      left: Math.random() * 90,
+      size: 30 + Math.random() * 50,
+      rotation: Math.random() * 360,
+      duration: 4 + Math.random() * 6,
+      delay: Math.random() * 8,
+    }))
+  );
 
   // Process the wordmark logo to remove black background
   useEffect(() => {
@@ -227,6 +242,33 @@ function HomePage({ setPage }) {
       setTransparentLogo(c.toDataURL());
     };
     img.src = LOGO_WORDMARK;
+  }, []);
+
+  // Process the people logo to remove black background
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const c = document.createElement("canvas");
+      c.width = img.width;
+      c.height = img.height;
+      const ctx = c.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      const imageData = ctx.getImageData(0, 0, c.width, c.height);
+      const data = imageData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i + 1], b = data[i + 2];
+        const brightness = (r + g + b) / 3;
+        if (brightness < 60) {
+          data[i + 3] = 0;
+        } else {
+          data[i + 3] = Math.min(255, Math.floor(brightness * 2.5));
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
+      setTransparentPeople(c.toDataURL());
+    };
+    img.src = LOGO_PEOPLE;
   }, []);
 
   useEffect(() => { setTimeout(() => setLoaded(true), 100); }, []);
@@ -341,6 +383,22 @@ function HomePage({ setPage }) {
             filter: "blur(1px) contrast(1.2)",
           }}
         />
+
+        {/* Scattered people logos */}
+        {transparentPeople && scatterItems.map((item, i) => (
+          <img key={i} src={transparentPeople} alt="" style={{
+            position: "absolute",
+            top: `${item.top}%`,
+            left: `${item.left}%`,
+            width: `${item.size}px`,
+            height: "auto",
+            transform: `rotate(${item.rotation}deg)`,
+            filter: "drop-shadow(0 0 20px rgba(255,255,255,0.3)) brightness(1.3)",
+            animation: `logoScatter ${item.duration}s ease-in-out ${item.delay}s infinite`,
+            opacity: 0,
+            pointerEvents: "none",
+          }} />
+        ))}
 
         {/* Vignette */}
         <div style={{

@@ -121,7 +121,7 @@ const globalCSS = `
   }
   @keyframes logoScatter {
     0%, 100% { opacity: 0; }
-    50% { opacity: 0.15; }
+    50% { opacity: 0.45; }
   }
   @keyframes dateGlow {
     0%, 100% { opacity: 0.5; text-shadow: 0 0 12px rgba(139,26,26,0.5), 0 0 30px rgba(139,26,26,0.3); }
@@ -207,10 +207,10 @@ function HomePage({ setPage }) {
   const [transparentLogo, setTransparentLogo] = useState(null);
   const [transparentPeople, setTransparentPeople] = useState(null);
   const [scatterItems] = useState(() =>
-    Array.from({ length: 18 }, () => ({
-      top: Math.random() * 90,
-      left: Math.random() * 90,
-      size: 30 + Math.random() * 50,
+    Array.from({ length: 25 }, () => ({
+      top: Math.random() * 100,
+      left: Math.random() * 100,
+      size: 40 + Math.random() * 70,
       rotation: Math.random() * 360,
       duration: 4 + Math.random() * 6,
       delay: Math.random() * 8,
@@ -366,6 +366,22 @@ function HomePage({ setPage }) {
 
   return (
     <div style={{ minHeight: "100vh", position: "relative", overflow: "hidden" }}>
+      {/* Scattered people logos across entire homepage */}
+      {transparentPeople && scatterItems.map((item, i) => (
+        <img key={i} src={transparentPeople} alt="" style={{
+          position: "fixed",
+          top: `${item.top}%`,
+          left: `${item.left}%`,
+          width: `${item.size}px`,
+          height: "auto",
+          transform: `rotate(${item.rotation}deg)`,
+          filter: "drop-shadow(0 0 25px rgba(255,255,255,0.5)) brightness(1.5)",
+          animation: `logoScatter ${item.duration}s ease-in-out ${item.delay}s infinite both`,
+          pointerEvents: "none",
+          zIndex: 0,
+        }} />
+      ))}
+
       {/* Hero */}
       <div style={{
         height: "100vh", display: "flex", flexDirection: "column",
@@ -383,21 +399,6 @@ function HomePage({ setPage }) {
             filter: "blur(1px) contrast(1.2)",
           }}
         />
-
-        {/* Scattered people logos */}
-        {transparentPeople && scatterItems.map((item, i) => (
-          <img key={i} src={transparentPeople} alt="" style={{
-            position: "absolute",
-            top: `${item.top}%`,
-            left: `${item.left}%`,
-            width: `${item.size}px`,
-            height: "auto",
-            transform: `rotate(${item.rotation}deg)`,
-            filter: "drop-shadow(0 0 20px rgba(255,255,255,0.3)) brightness(1.3)",
-            animation: `logoScatter ${item.duration}s ease-in-out ${item.delay}s infinite both`,
-            pointerEvents: "none",
-          }} />
-        ))}
 
         {/* Vignette */}
         <div style={{

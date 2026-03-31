@@ -463,8 +463,8 @@ function HomePage({ setPage }) {
             ))}
           </div>
           <span style={{
-            position: "absolute", bottom: "32px", right: "48px",
-            fontFamily: "'Lato', sans-serif", fontSize: "80px", fontWeight: 700,
+            position: "absolute", top: "20px", right: "24px",
+            fontFamily: "'Lato', sans-serif", fontSize: "48px", fontWeight: 700,
             color: AMBER_LIGHT, lineHeight: 1,
             animation: "dateGlow 3s ease-in-out infinite",
           }}>{UPCOMING_EVENTS[0].date.split(" ")[0]}</span>

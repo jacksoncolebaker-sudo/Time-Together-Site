@@ -463,7 +463,7 @@ function HomePage({ setPage }) {
             ))}
           </div>
           <span style={{
-            position: "absolute", top: "48px", right: "48px",
+            position: "absolute", bottom: "32px", right: "48px",
             fontFamily: "'Lato', sans-serif", fontSize: "80px", fontWeight: 700,
             color: AMBER_LIGHT, lineHeight: 1,
             animation: "dateGlow 3s ease-in-out infinite",

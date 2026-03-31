@@ -394,8 +394,7 @@ function HomePage({ setPage }) {
             height: "auto",
             transform: `rotate(${item.rotation}deg)`,
             filter: "drop-shadow(0 0 20px rgba(255,255,255,0.3)) brightness(1.3)",
-            animation: `logoScatter ${item.duration}s ease-in-out ${item.delay}s infinite`,
-            opacity: 0,
+            animation: `logoScatter ${item.duration}s ease-in-out ${item.delay}s infinite both`,
             pointerEvents: "none",
           }} />
         ))}

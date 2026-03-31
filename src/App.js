@@ -120,8 +120,8 @@ const globalCSS = `
     100% { transform: scale(1.2) skewX(-0.5deg) translate(3px, -4px); }
   }
   @keyframes dateGlow {
-    0%, 100% { opacity: 0.18; text-shadow: 0 0 8px rgba(139,26,26,0.3); }
-    50% { opacity: 0.3; text-shadow: 0 0 20px rgba(139,26,26,0.6), 0 0 40px rgba(139,26,26,0.2); }
+    0%, 100% { opacity: 0.5; text-shadow: 0 0 12px rgba(139,26,26,0.5), 0 0 30px rgba(139,26,26,0.3); }
+    50% { opacity: 0.75; text-shadow: 0 0 25px rgba(139,26,26,0.8), 0 0 50px rgba(139,26,26,0.4), 0 0 80px rgba(139,26,26,0.2); }
   }
 `;
 
@@ -464,8 +464,8 @@ function HomePage({ setPage }) {
           </div>
           <span style={{
             position: "absolute", top: "48px", right: "48px",
-            fontFamily: "'Lato', sans-serif", fontSize: "64px",
-            color: `rgba(139,26,26,0.25)`, lineHeight: 1,
+            fontFamily: "'Lato', sans-serif", fontSize: "80px", fontWeight: 700,
+            color: AMBER_LIGHT, lineHeight: 1,
             animation: "dateGlow 3s ease-in-out infinite",
           }}>{UPCOMING_EVENTS[0].date.split(" ")[0]}</span>
         </div>

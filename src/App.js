@@ -19,8 +19,6 @@ const LOGO_WORDMARK = "data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUN
 // ─── PLACEHOLDER DATA ───
 const UPCOMING_EVENTS = [
   { date: "MAR 27", day: "FRI", title: "Time Together Presents: Burner", venue: "Roam, Ballard", artists: ["Leah York", "Better Together (b3b)", "JBarta b2b Litlikevic", "NOINTRO", "Nate"], time: "9PM – 2AM", ticketLink: "#" },
-  { date: "APR 26", day: "SAT", title: "Heat Check", venue: "TBA", artists: ["Tour Maubourg", "Local Support"], time: "9PM – 2AM", ticketLink: "#" },
-  { date: "MAY 17", day: "SAT", title: "Time Together Vol. IV", venue: "Roam, Ballard", artists: ["Rad&co", "Jaxn", "Guests"], time: "10PM – 2AM", ticketLink: "#" },
 ];
 
 const PAST_EVENTS_GALLERY = [

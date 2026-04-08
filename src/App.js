@@ -21,26 +21,6 @@ const UPCOMING_EVENTS = [
   { date: "MAR 27", day: "FRI", title: "Time Together Presents: Burner", venue: "Roam, Ballard", artists: ["Leah York", "Better Together (b3b)", "JBarta b2b Litlikevic", "NOINTRO", "Nate"], time: "9PM – 2AM", ticketLink: "#" },
 ];
 
-const PAST_EVENTS_GALLERY = [
-  { title: "Time Together Vol. II", date: "Feb 2026", images: ["https://images.unsplash.com/photo-1571266028243-e4733b0f0bb0?w=600&q=80", "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&q=80", "https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=600&q=80"] },
-  { title: "Time Together Vol. I", date: "Dec 2025", images: ["https://images.unsplash.com/photo-1574391884720-bbc3740c59d1?w=600&q=80", "https://images.unsplash.com/photo-1493676304819-0d7a8d026dcf?w=600&q=80", "https://images.unsplash.com/photo-1508854710579-5cecc3a9ff17?w=600&q=80"] },
-];
-
-const WEEKLY_MIXES = [
-  { title: "Slow Burn Vol. 7", artist: "Jaxn", genre: "Deep House / Afro", duration: "1:12:00", date: "Mar 14, 2026", link: "#", cover: "https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=400&q=80" },
-  { title: "Late Night Textures", artist: "Guest Mix – Tour Maubourg", genre: "Lo-fi House", duration: "58:00", date: "Mar 7, 2026", link: "#", cover: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&q=80" },
-  { title: "Slow Burn Vol. 6", artist: "Jaxn", genre: "Minimal / Dub", duration: "1:05:00", date: "Feb 28, 2026", link: "#", cover: "https://images.unsplash.com/photo-1526478806334-5fd488fcaabc?w=400&q=80" },
-  { title: "Morning After", artist: "Guest Mix – Rad&co", genre: "Breaks / Electro", duration: "1:20:00", date: "Feb 21, 2026", link: "#", cover: "https://images.unsplash.com/photo-1614149162883-504ce4d13909?w=400&q=80" },
-];
-
-const FAVORITE_RECORDS = [
-  { title: "Gaya", artist: "Tour Maubourg", label: "Pont Neuf Records", year: "2025", link: "#", cover: "https://images.unsplash.com/photo-1539375665275-f9de415ef9ac?w=300&q=80" },
-  { title: "Ritual Ground", artist: "Chaos In The CBD", label: "In Dust We Trust", year: "2026", link: "#", cover: "https://images.unsplash.com/photo-1558584673-c834fb1cc3b1?w=300&q=80" },
-  { title: "Magnetic Fields", artist: "DJ Boring", label: "E-Beamz", year: "2026", link: "#", cover: "https://images.unsplash.com/photo-1604431696980-07e518647610?w=300&q=80" },
-  { title: "Sun Phase", artist: "Make A Dance", label: "Secret Reels", year: "2025", link: "#", cover: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=300&q=80" },
-  { title: "Nocturne", artist: "Folamour", label: "FHUO Records", year: "2026", link: "#", cover: "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=300&q=80" },
-];
-
 // ─── STYLES ───
 const globalCSS = `
   @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
@@ -468,96 +448,8 @@ function EventsPage() {
 
 // ─── GALLERY PAGE ───
 function GalleryPage() {
-  const [selectedImg, setSelectedImg] = useState(null);
-
   return (
     <div style={{ minHeight: "100vh", paddingTop: "120px", padding: "120px 32px 80px" }}>
-      <div style={{ maxWidth: "1000px", margin: "0 auto" }}>
-        <span style={{
-          fontFamily: "'Lato', sans-serif", fontSize: "12px",
-          letterSpacing: "4px", color: AMBER_LIGHT, textTransform: "uppercase",
-        }}>Memories</span>
-        <h1 style={{
-          fontFamily: "'Lato', sans-serif", fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 700,
-          letterSpacing: "6px", color: TEXT_PRIMARY, marginTop: "8px", marginBottom: "48px",
-        }}>Past Events</h1>
-
-        {PAST_EVENTS_GALLERY.map((event, ei) => (
-          <div key={ei} style={{ marginBottom: "64px" }}>
-            <div style={{ display: "flex", alignItems: "baseline", gap: "16px", marginBottom: "20px" }}>
-              <h2 style={{
-                fontFamily: "'Lato', sans-serif", fontSize: "28px", fontWeight: 700,
-                letterSpacing: "3px", color: TEXT_PRIMARY,
-              }}>{event.title}</h2>
-              <span style={{
-                fontFamily: "'Lato', sans-serif", fontSize: "12px",
-                color: TEXT_MUTED, letterSpacing: "2px",
-              }}>{event.date}</span>
-            </div>
-            <div style={{
-              display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "4px",
-            }}>
-              {event.images.map((img, ii) => (
-                <div
-                  key={ii}
-                  onClick={() => setSelectedImg(img)}
-                  style={{
-                    aspectRatio: "4/3", overflow: "hidden", cursor: "pointer",
-                    position: "relative", borderRadius: "2px",
-                  }}
-                >
-                  <img src={img} alt="" style={{
-                    width: "100%", height: "100%", objectFit: "cover",
-                    filter: "saturate(0.7) brightness(0.85)",
-                    transition: "all 0.5s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.filter = "saturate(0.9) brightness(1)";
-                    e.target.style.transform = "scale(1.05)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.filter = "saturate(0.7) brightness(0.85)";
-                    e.target.style.transform = "scale(1)";
-                  }}
-                  />
-                  <div style={{
-                    position: "absolute", inset: 0,
-                    background: "linear-gradient(to top, rgba(10,10,10,0.4), transparent)",
-                    pointerEvents: "none",
-                  }} />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
-
-        <p style={{
-          fontFamily: "'Lato', sans-serif", fontSize: "12px",
-          color: TEXT_MUTED, textAlign: "center", marginTop: "40px",
-          letterSpacing: "1px",
-        }}>
-          Replace placeholder images with your event photos
-        </p>
-      </div>
-
-      {/* Lightbox */}
-      {selectedImg && (
-        <div
-          onClick={() => setSelectedImg(null)}
-          style={{
-            position: "fixed", inset: 0, zIndex: 2000,
-            background: "rgba(0,0,0,0.92)", backdropFilter: "blur(20px)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-            cursor: "pointer", animation: "fadeIn 0.3s ease",
-          }}
-        >
-          <img src={selectedImg} alt="" style={{
-            maxWidth: "90vw", maxHeight: "85vh", objectFit: "contain",
-            borderRadius: "2px",
-          }} />
-        </div>
-      )}
     </div>
   );
 }
@@ -566,89 +458,6 @@ function GalleryPage() {
 function MixesPage() {
   return (
     <div style={{ minHeight: "100vh", paddingTop: "120px", padding: "120px 32px 80px" }}>
-      <div style={{ maxWidth: "800px", margin: "0 auto" }}>
-        <span style={{
-          fontFamily: "'Lato', sans-serif", fontSize: "12px",
-          letterSpacing: "4px", color: AMBER_LIGHT, textTransform: "uppercase",
-        }}>Listen</span>
-        <h1 style={{
-          fontFamily: "'Lato', sans-serif", fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 700,
-          letterSpacing: "6px", color: TEXT_PRIMARY, marginTop: "8px", marginBottom: "48px",
-        }}>Weekly Mixes</h1>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-          {WEEKLY_MIXES.map((mix, i) => (
-            <a
-              key={i}
-              href={mix.link}
-              style={{
-                display: "grid", gridTemplateColumns: "80px 1fr auto",
-                gap: "20px", alignItems: "center",
-                padding: "16px", background: BG_CARD,
-                border: `1px solid ${BORDER}`, borderRadius: "2px",
-                textDecoration: "none", transition: "all 0.3s ease",
-                animation: `fadeInUp 0.5s ease ${i * 0.08}s both`,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = AMBER;
-                e.currentTarget.style.background = BG_CARD_HOVER;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = `rgba(139,26,26,0.15)`;
-                e.currentTarget.style.background = BG_CARD;
-              }}
-            >
-              <div style={{
-                width: "80px", height: "80px", borderRadius: "2px", overflow: "hidden",
-                position: "relative",
-              }}>
-                <img src={mix.cover} alt="" style={{
-                  width: "100%", height: "100%", objectFit: "cover",
-                  filter: "saturate(0.6)",
-                }} />
-                {/* Play icon */}
-                <div style={{
-                  position: "absolute", inset: 0, display: "flex",
-                  alignItems: "center", justifyContent: "center",
-                  background: "rgba(0,0,0,0.3)",
-                }}>
-                  <div style={{
-                    width: 0, height: 0,
-                    borderTop: "8px solid transparent",
-                    borderBottom: "8px solid transparent",
-                    borderLeft: `14px solid ${AMBER}`,
-                    marginLeft: "3px",
-                  }} />
-                </div>
-              </div>
-              <div>
-                <h3 style={{
-                  fontFamily: "'Lato', sans-serif", fontSize: "20px", fontWeight: 700,
-                  letterSpacing: "2px", color: TEXT_PRIMARY,
-                }}>{mix.title}</h3>
-                <div style={{
-                  fontFamily: "'Lato', sans-serif", fontSize: "18px",
-                  color: TEXT_DIM, fontWeight: 600, marginTop: "2px",
-                }}>{mix.artist}</div>
-                <div style={{
-                  fontFamily: "'Lato', sans-serif", fontSize: "12px",
-                  color: TEXT_MUTED, marginTop: "4px", letterSpacing: "1px",
-                }}>{mix.genre}</div>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{
-                  fontFamily: "'Lato', sans-serif", fontSize: "12px",
-                  color: TEXT_DIM,
-                }}>{mix.duration}</div>
-                <div style={{
-                  fontFamily: "'Lato', sans-serif", fontSize: "12px",
-                  color: TEXT_MUTED, marginTop: "4px",
-                }}>{mix.date}</div>
-              </div>
-            </a>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
@@ -657,73 +466,6 @@ function MixesPage() {
 function RecordsPage() {
   return (
     <div style={{ minHeight: "100vh", paddingTop: "120px", padding: "120px 32px 80px" }}>
-      <div style={{ maxWidth: "900px", margin: "0 auto" }}>
-        <span style={{
-          fontFamily: "'Lato', sans-serif", fontSize: "12px",
-          letterSpacing: "4px", color: AMBER_LIGHT, textTransform: "uppercase",
-        }}>Digging</span>
-        <h1 style={{
-          fontFamily: "'Lato', sans-serif", fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 700,
-          letterSpacing: "6px", color: TEXT_PRIMARY, marginTop: "8px",
-        }}>Favorite Records</h1>
-        <p style={{
-          fontFamily: "'Lato', sans-serif", fontSize: "13px",
-          color: TEXT_MUTED, letterSpacing: "1px", marginTop: "8px", marginBottom: "48px",
-        }}>This week's picks from the crate</p>
-
-        <div style={{
-          display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
-          gap: "20px",
-        }}>
-          {FAVORITE_RECORDS.map((rec, i) => (
-            <a
-              key={i}
-              href={rec.link}
-              style={{
-                textDecoration: "none", display: "flex", flexDirection: "column",
-                animation: `fadeInUp 0.5s ease ${i * 0.08}s both`,
-              }}
-            >
-              <div style={{
-                aspectRatio: "1", borderRadius: "2px", overflow: "hidden",
-                position: "relative", marginBottom: "12px",
-              }}>
-                <img src={rec.cover} alt="" style={{
-                  width: "100%", height: "100%", objectFit: "cover",
-                  filter: "saturate(0.5) brightness(0.9)",
-                  transition: "all 0.4s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.filter = "saturate(0.8) brightness(1)";
-                  e.target.style.transform = "scale(1.05)";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.filter = "saturate(0.5) brightness(0.9)";
-                  e.target.style.transform = "scale(1)";
-                }}
-                />
-                <div style={{
-                  position: "absolute", inset: 0,
-                  background: `linear-gradient(to top, rgba(10,10,10,0.5), transparent 50%)`,
-                  pointerEvents: "none",
-                }} />
-              </div>
-              <h3 style={{
-                fontFamily: "'Lato', sans-serif", fontSize: "14px",
-                fontWeight: 500, color: TEXT_PRIMARY, lineHeight: 1.3,
-              }}>{rec.title}</h3>
-              <div style={{
-                fontFamily: "'Lato', sans-serif", fontSize: "18px",
-                color: TEXT_DIM, fontWeight: 600, marginTop: "2px",
-              }}>{rec.artist}</div>
-              <div style={{
-                fontFamily: "'Lato', sans-serif", fontSize: "12px",
-                color: TEXT_MUTED, marginTop: "4px", letterSpacing: "1px",
-              }}>{rec.label} · {rec.year}</div>
-            </a>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

@@ -731,8 +731,12 @@ function Footer() {
         textShadow: "0 0 8px rgba(220,20,60,0.5), 0 0 16px rgba(220,20,60,0.25)",
       }}>© 2026 Time Together</span>
       <div style={{ display: "flex", gap: "24px" }}>
-        {["Instagram", "SoundCloud", "Email"].map((link) => (
-          <a key={link} href="#" style={{
+        {[
+          { label: "Instagram", href: "#" },
+          { label: "SoundCloud", href: "#" },
+          { label: "Email", href: "mailto:jackson@timetogetherprod.com" },
+        ].map(({ label, href }) => (
+          <a key={label} href={href} style={{
             fontFamily: "'Lato', sans-serif", fontSize: "12px",
             letterSpacing: "2px", color: "#DC143C", textDecoration: "none",
             textTransform: "uppercase", transition: "all 0.3s",
@@ -740,7 +744,7 @@ function Footer() {
           }}
           onMouseEnter={(e) => { e.target.style.color = "#FF2D55"; e.target.style.textShadow = "0 0 12px rgba(255,45,85,0.6), 0 0 24px rgba(255,45,85,0.35)"; }}
           onMouseLeave={(e) => { e.target.style.color = "#DC143C"; e.target.style.textShadow = "0 0 8px rgba(220,20,60,0.5), 0 0 16px rgba(220,20,60,0.25)"; }}
-          >{link}</a>
+          >{label}</a>
         ))}
       </div>
     </footer>

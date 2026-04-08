@@ -147,12 +147,12 @@ function Nav({ currentPage, setPage }) {
               background: "none", border: "none", cursor: "pointer",
               fontFamily: "'Lato', sans-serif", fontSize: "15px", fontWeight: 700,
               letterSpacing: "2px", textTransform: "uppercase",
-              color: currentPage === item.id ? AMBER : TEXT_DIM,
+              color: currentPage === item.id ? AMBER : "#FFFFFF",
               transition: "color 0.3s ease",
               position: "relative", padding: "4px 0", flexShrink: 0,
             }}
             onMouseEnter={(e) => e.target.style.color = AMBER_LIGHT}
-            onMouseLeave={(e) => e.target.style.color = currentPage === item.id ? AMBER : TEXT_DIM}
+            onMouseLeave={(e) => e.target.style.color = currentPage === item.id ? AMBER : "#FFFFFF"}
           >
             {item.label}
             {currentPage === item.id && (

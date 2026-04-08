@@ -368,22 +368,6 @@ function HomePage({ setPage }) {
           every event is an invitation to slow down, tune in, and share something real. 
           No pretense. No velvet ropes. Just good sound, good people, and time well spent together.
         </p>
-        <div style={{
-          display: "flex", gap: "24px", marginTop: "32px",
-        }}>
-          <a href="https://instagram.com/timetogetherprod" target="_blank" rel="noopener noreferrer" style={{
-            fontFamily: "'Lato', sans-serif", fontSize: "13px",
-            letterSpacing: "2px", color: AMBER_LIGHT, textDecoration: "none",
-            textTransform: "uppercase", borderBottom: `1px solid ${BORDER}`,
-            paddingBottom: "2px", transition: "border-color 0.3s",
-          }}>Instagram</a>
-          <a href="https://soundcloud.com/timetogetherprod" target="_blank" rel="noopener noreferrer" style={{
-            fontFamily: "'Lato', sans-serif", fontSize: "13px",
-            letterSpacing: "2px", color: AMBER_LIGHT, textDecoration: "none",
-            textTransform: "uppercase", borderBottom: `1px solid ${BORDER}`,
-            paddingBottom: "2px",
-          }}>SoundCloud</a>
-        </div>
       </div>
     </div>
   );

@@ -232,10 +232,10 @@ function HomePage({ setPage }) {
       for (let i = 0; i < data.length; i += 4) {
         const r = data[i], g = data[i + 1], b = data[i + 2];
         const brightness = (r + g + b) / 3;
-        if (brightness < 60) {
+        if (brightness < 128) {
           data[i + 3] = 0;
         } else {
-          data[i + 3] = Math.min(255, Math.floor(brightness * 2.5));
+          data[i + 3] = Math.min(255, Math.floor((brightness - 128) * 2));
         }
       }
       ctx.putImageData(imageData, 0, 0);

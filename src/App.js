@@ -348,7 +348,8 @@ function HomePage({ setPage }) {
 
       {/* About Section */}
       <div style={{
-        padding: "80px 32px 120px", maxWidth: "700px", margin: "0 auto",
+        padding: "80px clamp(20px, 5vw, 32px) 120px", maxWidth: "700px", margin: "0 auto",
+        position: "relative", zIndex: 1,
       }}>
         <div style={{
           width: "40px", height: "1px", background: AMBER, marginBottom: "32px",
@@ -358,8 +359,10 @@ function HomePage({ setPage }) {
           letterSpacing: "4px", color: TEXT_PRIMARY, marginBottom: "24px",
         }}>About Us</h3>
         <p style={{
-          fontFamily: "'Lato', sans-serif", fontSize: "18px",
-          lineHeight: 1.8, color: TEXT_DIM, fontWeight: 600,
+          fontFamily: "'Lato', sans-serif", fontSize: "clamp(16px, 4vw, 18px)",
+          lineHeight: 1.9, color: "#FFFFFF", fontWeight: 400,
+          position: "relative", zIndex: 1,
+          textShadow: "0 1px 3px rgba(0,0,0,0.8)",
         }}>
           Time Together is a Seattle-based music collective dedicated to creating intimate, 
           high-quality experiences rooted in house, deep house, and electronic music culture. 

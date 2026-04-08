@@ -90,7 +90,7 @@ const globalCSS = `
   }
   @keyframes logoScatter {
     0%, 100% { opacity: 0; }
-    50% { opacity: 0.45; }
+    50% { opacity: 0.36; }
   }
   @keyframes dateGlow {
     0%, 100% { opacity: 0.5; text-shadow: 0 0 12px rgba(139,26,26,0.5), 0 0 30px rgba(139,26,26,0.3); }

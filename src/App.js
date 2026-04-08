@@ -727,17 +727,19 @@ function Footer() {
     }}>
       <span style={{
         fontFamily: "'Lato', sans-serif", fontSize: "12px",
-        letterSpacing: "3px", color: TEXT_MUTED, textTransform: "uppercase",
+        letterSpacing: "3px", color: "#DC143C", textTransform: "uppercase",
+        textShadow: "0 0 8px rgba(220,20,60,0.5), 0 0 16px rgba(220,20,60,0.25)",
       }}>© 2026 Time Together</span>
       <div style={{ display: "flex", gap: "24px" }}>
         {["Instagram", "SoundCloud", "Email"].map((link) => (
           <a key={link} href="#" style={{
             fontFamily: "'Lato', sans-serif", fontSize: "12px",
-            letterSpacing: "2px", color: TEXT_DIM, textDecoration: "none",
-            textTransform: "uppercase", transition: "color 0.3s",
+            letterSpacing: "2px", color: "#DC143C", textDecoration: "none",
+            textTransform: "uppercase", transition: "all 0.3s",
+            textShadow: "0 0 8px rgba(220,20,60,0.5), 0 0 16px rgba(220,20,60,0.25)",
           }}
-          onMouseEnter={(e) => e.target.style.color = AMBER}
-          onMouseLeave={(e) => e.target.style.color = TEXT_DIM}
+          onMouseEnter={(e) => { e.target.style.color = "#FF2D55"; e.target.style.textShadow = "0 0 12px rgba(255,45,85,0.6), 0 0 24px rgba(255,45,85,0.35)"; }}
+          onMouseLeave={(e) => { e.target.style.color = "#DC143C"; e.target.style.textShadow = "0 0 8px rgba(220,20,60,0.5), 0 0 16px rgba(220,20,60,0.25)"; }}
           >{link}</a>
         ))}
       </div>

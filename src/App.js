@@ -173,16 +173,27 @@ function HomePage({ setPage }) {
   const [loaded, setLoaded] = useState(false);
   const [transparentLogo, setTransparentLogo] = useState(null);
   const [transparentPeople, setTransparentPeople] = useState(null);
-  const [scatterItems] = useState(() =>
-    Array.from({ length: 25 }, () => ({
+  const [scatterItems] = useState(() => {
+    const candidates = Array.from({ length: 60 }, () => ({
       top: Math.random() * 100,
       left: Math.random() * 100,
       size: 40 + Math.random() * 70,
       rotation: Math.random() * 360,
       duration: 4 + Math.random() * 6,
       delay: Math.random() * 8,
-    }))
-  );
+    }));
+    const kept = [];
+    for (const item of candidates) {
+      const overlaps = kept.some((other) => {
+        const dx = (item.left - other.left) * 0.01 * 1920;
+        const dy = (item.top - other.top) * 0.01 * 1080;
+        const minDist = (item.size + other.size) / 2;
+        return Math.sqrt(dx * dx + dy * dy) < minDist;
+      });
+      if (!overlaps) kept.push(item);
+    }
+    return kept;
+  });
 
   // Process the wordmark logo to remove black background
   useEffect(() => {

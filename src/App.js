@@ -84,19 +84,6 @@ const globalCSS = `
     0% { background-position: -200% 0; }
     100% { background-position: 200% 0; }
   }
-  @keyframes logoGlow {
-    0%, 100% { opacity: 0.5; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.08); }
-  }
-  @keyframes logoGlow2 {
-    0%, 100% { opacity: 0.3; transform: scale(1.05); }
-    50% { opacity: 0.7; transform: scale(1.25); }
-  }
-  @keyframes logoGlow3 {
-    0%, 100% { opacity: 0.4; transform: scale(1.02) rotate(-1deg); }
-    33% { opacity: 0.8; transform: scale(1.1) rotate(0.5deg); }
-    66% { opacity: 0.5; transform: scale(1.06) rotate(-0.5deg); }
-  }
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-8px); }
@@ -406,50 +393,9 @@ function HomePage({ setPage }) {
           background: `radial-gradient(ellipse at center, transparent 25%, ${BG_DARK} 85%)`,
         }} />
 
-        {/* Outer wide glow - slow breathe */}
-        <div style={{
-          position: "absolute",
-          width: "clamp(500px, 80vw, 900px)", height: "clamp(280px, 45vh, 500px)",
-          background: "radial-gradient(ellipse at center, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.08) 30%, rgba(255,255,255,0.02) 55%, transparent 75%)",
-          animation: "logoGlow2 6s ease-in-out infinite",
-          pointerEvents: "none",
-        }} />
-        {/* Mid glow - medium pulse */}
-        <div style={{
-          position: "absolute",
-          width: "clamp(380px, 60vw, 700px)", height: "clamp(200px, 30vh, 350px)",
-          background: "radial-gradient(ellipse at center, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0.1) 30%, transparent 65%)",
-          animation: "logoGlow3 8s ease-in-out infinite",
-          pointerEvents: "none",
-        }} />
-        {/* Inner tight glow - fast pulse */}
-        <div style={{
-          position: "absolute",
-          width: "clamp(300px, 50vw, 580px)", height: "clamp(150px, 22vh, 260px)",
-          background: "radial-gradient(ellipse at center, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 35%, transparent 60%)",
-          animation: "logoGlow 3.5s ease-in-out infinite",
-          pointerEvents: "none",
-        }} />
-        {/* Extra blurred logo copy for halo */}
-        {transparentLogo && <img src={transparentLogo} alt="" style={{
-          position: "absolute",
-          width: "clamp(320px, 55vw, 600px)", height: "auto",
-          filter: "blur(35px) brightness(1.5)",
-          animation: "logoGlow 5s ease-in-out infinite",
-          pointerEvents: "none",
-        }} />}
-        {/* Medium blurred logo copy */}
-        {transparentLogo && <img src={transparentLogo} alt="" style={{
-          position: "absolute",
-          width: "clamp(290px, 52vw, 560px)", height: "auto",
-          filter: "blur(12px) brightness(1.3)",
-          animation: "logoGlow3 7s ease-in-out infinite",
-          pointerEvents: "none",
-        }} />}
         {/* Sharp wordmark logo */}
         {transparentLogo && <img src={transparentLogo} alt="Time Together" style={{
           width: "clamp(280px, 50vw, 550px)", height: "auto",
-          filter: "drop-shadow(0 0 40px rgba(255,255,255,0.5)) drop-shadow(0 0 80px rgba(255,255,255,0.25)) drop-shadow(0 0 120px rgba(255,255,255,0.1))",
         }} />}
 
         {/* Scroll indicator */}

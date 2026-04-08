@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 
 const AMBER = "#8B1A1A";
 const AMBER_LIGHT = "#A62626";
@@ -88,24 +88,6 @@ const globalCSS = `
     0%, 100% { transform: translateY(0px); }
     50% { transform: translateY(-8px); }
   }
-  @keyframes vhsDrift {
-    0% { transform: scale(1.1) translate(0, 0); }
-    25% { transform: scale(1.12) translate(5px, -3px); }
-    50% { transform: scale(1.1) translate(-3px, 5px); }
-    75% { transform: scale(1.13) translate(2px, -2px); }
-    100% { transform: scale(1.1) translate(-4px, 3px); }
-  }
-  @keyframes vhsDrift2 {
-    0% { transform: scale(1.15) translate(0, 0) skewX(0deg); }
-    33% { transform: scale(1.17) translate(-6px, 4px) skewX(0.5deg); }
-    66% { transform: scale(1.15) translate(4px, -5px) skewX(-0.3deg); }
-    100% { transform: scale(1.16) translate(3px, 2px) skewX(0.2deg); }
-  }
-  @keyframes vhsDrift3 {
-    0% { transform: scale(1.2) skewX(-1deg) translate(0, 0); }
-    50% { transform: scale(1.22) skewX(0.5deg) translate(-5px, 6px); }
-    100% { transform: scale(1.2) skewX(-0.5deg) translate(3px, -4px); }
-  }
   @keyframes logoScatter {
     0%, 100% { opacity: 0; }
     50% { opacity: 0.45; }
@@ -189,8 +171,6 @@ function Nav({ currentPage, setPage }) {
 // ─── HOME PAGE ───
 function HomePage({ setPage }) {
   const [loaded, setLoaded] = useState(false);
-  const canvasRef = useRef(null);
-  const animRef = useRef(null);
   const [transparentLogo, setTransparentLogo] = useState(null);
   const [transparentPeople, setTransparentPeople] = useState(null);
   const [scatterItems] = useState(() =>
@@ -260,97 +240,6 @@ function HomePage({ setPage }) {
 
   useEffect(() => { setTimeout(() => setLoaded(true), 100); }, []);
 
-  // Procedural grungy crowd-like texture via canvas
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    const W = 800;
-    const H = 600;
-    canvas.width = W;
-    canvas.height = H;
-
-    // Create multiple "crowd silhouette" shapes
-    function drawCrowdLayer(ctx, seed, yBase, scale) {
-      ctx.save();
-      ctx.globalAlpha = 0.15 + Math.random() * 0.1;
-      // Draw irregular crowd bumps along the bottom
-      ctx.beginPath();
-      ctx.moveTo(0, H);
-      for (let x = 0; x < W; x += 8) {
-        const noise1 = Math.sin(x * 0.02 + seed) * 30;
-        const noise2 = Math.sin(x * 0.05 + seed * 2.3) * 15;
-        const noise3 = Math.sin(x * 0.11 + seed * 0.7) * 10;
-        const headBump = Math.abs(Math.sin(x * 0.08 + seed * 1.5)) > 0.7 ? -20 - Math.random() * 25 : 0;
-        const y = yBase + noise1 + noise2 + noise3 + headBump;
-        ctx.lineTo(x, y * scale);
-      }
-      ctx.lineTo(W, H);
-      ctx.closePath();
-      ctx.fillStyle = `rgba(200, 180, 160, ${0.08 + Math.random() * 0.06})`;
-      ctx.fill();
-      ctx.restore();
-    }
-
-    // Organic noise field
-    function drawNoiseField(ctx, time) {
-      const imageData = ctx.getImageData(0, 0, W, H);
-      const data = imageData.data;
-      for (let i = 0; i < data.length; i += 16) {
-        const brightness = Math.random() * 18;
-        data[i] = brightness;
-        data[i + 1] = brightness * 0.9;
-        data[i + 2] = brightness * 0.8;
-        data[i + 3] = Math.random() * 40;
-      }
-      ctx.putImageData(imageData, 0, 0);
-    }
-
-    let time = 0;
-    function render() {
-      ctx.clearRect(0, 0, W, H);
-      
-      // Dark base
-      ctx.fillStyle = "#080808";
-      ctx.fillRect(0, 0, W, H);
-
-      // Film grain noise
-      drawNoiseField(ctx, time);
-
-      // Multiple crowd silhouette layers at different depths
-      drawCrowdLayer(ctx, time * 0.3, H * 0.55, 1);
-      drawCrowdLayer(ctx, time * 0.2 + 50, H * 0.5, 1.05);
-      drawCrowdLayer(ctx, time * 0.15 + 100, H * 0.45, 1.1);
-      drawCrowdLayer(ctx, time * 0.4 + 25, H * 0.6, 0.95);
-
-      // Scattered light beams (stage lighting)
-      for (let b = 0; b < 3; b++) {
-        const bx = W * 0.2 + Math.sin(time * 0.5 + b * 2.1) * W * 0.3;
-        const grad = ctx.createRadialGradient(bx, H * 0.1, 0, bx, H * 0.1, H * 0.7);
-        grad.addColorStop(0, `rgba(139, 26, 26, ${0.04 + Math.sin(time * 0.3 + b) * 0.02})`);
-        grad.addColorStop(0.5, `rgba(100, 20, 20, 0.02)`);
-        grad.addColorStop(1, "transparent");
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, W, H);
-      }
-
-      // Subtle horizontal VHS distortion lines
-      for (let l = 0; l < 5; l++) {
-        const ly = (Math.sin(time * 0.7 + l * 1.3) * 0.5 + 0.5) * H;
-        ctx.fillStyle = `rgba(139, 26, 26, ${0.03 + Math.random() * 0.02})`;
-        ctx.fillRect(0, ly, W, 1 + Math.random() * 2);
-      }
-
-      time += 0.008;
-      animRef.current = requestAnimationFrame(render);
-    }
-
-    render();
-    return () => {
-      if (animRef.current) cancelAnimationFrame(animRef.current);
-    };
-  }, []);
-
   return (
     <div style={{ minHeight: "100vh", position: "relative", overflow: "hidden" }}>
       {/* Scattered people logos across entire homepage */}
@@ -375,24 +264,6 @@ function HomePage({ setPage }) {
         alignItems: "center", justifyContent: "center", position: "relative",
         overflow: "hidden",
       }}>
-        {/* Canvas-based crowd background */}
-        <canvas
-          ref={canvasRef}
-          style={{
-            position: "absolute", inset: 0,
-            width: "100%", height: "100%",
-            objectFit: "cover",
-            opacity: 0.7,
-            filter: "blur(1px) contrast(1.2)",
-          }}
-        />
-
-        {/* Vignette */}
-        <div style={{
-          position: "absolute", inset: 0, pointerEvents: "none",
-          background: `radial-gradient(ellipse at center, transparent 25%, ${BG_DARK} 85%)`,
-        }} />
-
         {/* Sharp wordmark logo */}
         {transparentLogo && <img src={transparentLogo} alt="Time Together" style={{
           width: "clamp(280px, 50vw, 550px)", height: "auto",

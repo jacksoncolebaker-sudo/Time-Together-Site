@@ -174,7 +174,7 @@ function HomePage({ setPage }) {
   const [transparentLogo, setTransparentLogo] = useState(null);
   const [transparentPeople, setTransparentPeople] = useState(null);
   const [scatterItems] = useState(() => {
-    const candidates = Array.from({ length: 60 }, () => ({
+    const candidates = Array.from({ length: 42 }, () => ({
       top: Math.random() * 100,
       left: Math.random() * 100,
       size: 40 + Math.random() * 70,

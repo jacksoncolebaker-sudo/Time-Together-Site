@@ -76,6 +76,13 @@ const globalCSS = `
     0%, 100% { opacity: 0.5; text-shadow: 0 0 12px rgba(139,26,26,0.5), 0 0 30px rgba(139,26,26,0.3); }
     50% { opacity: 0.75; text-shadow: 0 0 25px rgba(139,26,26,0.8), 0 0 50px rgba(139,26,26,0.4), 0 0 80px rgba(139,26,26,0.2); }
   }
+  @keyframes traceBorderCCW {
+    0%   { top: 0%;   left: 0%; }
+    25%  { top: 100%; left: 0%; }
+    50%  { top: 100%; left: 100%; }
+    75%  { top: 0%;   left: 100%; }
+    100% { top: 0%;   left: 0%; }
+  }
 `;
 
 // ─── NAV ───
@@ -401,7 +408,7 @@ function EventsPage() {
             <div
               key={i}
               style={{
-                display: "flex", flexDirection: "column",
+                display: "flex", flexDirection: "column", position: "relative",
                 padding: "28px 24px", background: BG_CARD,
                 border: `1px solid ${BORDER}`, borderRadius: "2px",
                 transition: "all 0.3s ease",
@@ -416,6 +423,15 @@ function EventsPage() {
                 e.currentTarget.style.background = BG_CARD;
               }}
             >
+              <span style={{
+                position: "absolute", top: 0, left: 0,
+                width: "8px", height: "8px", borderRadius: "50%",
+                background: "#FF2D4B",
+                boxShadow: "0 0 6px 2px rgba(255,45,75,0.95), 0 0 14px 5px rgba(220,20,60,0.55), 0 0 26px 9px rgba(220,20,60,0.3)",
+                transform: "translate(-50%, -50%)",
+                animation: "traceBorderCCW 6s linear infinite",
+                pointerEvents: "none", zIndex: 3,
+              }} />
               <h3 style={{
                 fontFamily: "'Lato', sans-serif", fontSize: "clamp(32px, 11.5vw, 52px)", fontWeight: 700,
                 letterSpacing: "1px", color: TEXT_PRIMARY, marginTop: "0",

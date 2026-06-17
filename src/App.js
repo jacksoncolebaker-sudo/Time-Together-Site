@@ -333,8 +333,9 @@ function HomePage({ setPage }) {
           }}>Next Event</span>
           <h2 style={{
             fontFamily: "'Lato', sans-serif", fontSize: "clamp(24px, 7.5vw, 42px)", fontWeight: 700,
-            letterSpacing: "3px", marginTop: "28px", color: TEXT_PRIMARY,
+            letterSpacing: "3px", marginTop: "28px", color: "#FFFFFF",
             whiteSpace: "nowrap",
+            textShadow: "0 1px 3px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.55)",
           }}>
             {UPCOMING_EVENTS[0].title}
           </h2>
@@ -349,13 +350,15 @@ function HomePage({ setPage }) {
               return (
                 <span key={i} style={{
                   fontFamily: "'Lato', sans-serif", fontSize: "16px",
-                  fontWeight: 600, color: TEXT_PRIMARY, letterSpacing: "0.5px",
+                  fontWeight: 600, color: "#FFFFFF", letterSpacing: "0.5px",
+                  textShadow: "0 1px 3px rgba(0,0,0,0.85)",
                 }}>
                   {main}
                   {paren && (
                     <span style={{
                       fontSize: "12px", fontWeight: 400,
-                      color: TEXT_DIM, letterSpacing: "0.3px",
+                      color: "#D5CFC4", letterSpacing: "0.3px",
+                      textShadow: "0 1px 2px rgba(0,0,0,0.8)",
                     }}> {paren}</span>
                   )}
                 </span>
@@ -364,8 +367,9 @@ function HomePage({ setPage }) {
           </div>
           <div style={{
             fontFamily: "'Lato', sans-serif", fontSize: "13px",
-            color: TEXT_DIM, marginTop: "32px",
+            color: "#D5CFC4", marginTop: "32px",
             display: "flex", gap: "24px", flexWrap: "wrap",
+            textShadow: "0 1px 2px rgba(0,0,0,0.8)",
           }}>
             <span>{UPCOMING_EVENTS[0].displayDate} {UPCOMING_EVENTS[0].time}</span>
             <span>{UPCOMING_EVENTS[0].venue}</span>
@@ -444,7 +448,8 @@ function EventsPage() {
             >
               <h3 style={{
                 fontFamily: "'Lato', sans-serif", fontSize: "clamp(32px, 11.5vw, 52px)", fontWeight: 700,
-                letterSpacing: "1px", color: TEXT_PRIMARY, marginTop: "0",
+                letterSpacing: "1px", color: "#FFFFFF", marginTop: "0",
+                textShadow: "0 1px 3px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.55)",
               }}>{evt.title}</h3>
               <div style={{
                 display: "flex", flexDirection: "column", gap: "4px", marginTop: "16px",
@@ -456,12 +461,14 @@ function EventsPage() {
                   return (
                     <span key={j} style={{
                       fontFamily: "'Lato', sans-serif", fontSize: "16px",
-                      fontWeight: 600, color: TEXT_PRIMARY, letterSpacing: "0.3px",
+                      fontWeight: 600, color: "#FFFFFF", letterSpacing: "0.3px",
+                      textShadow: "0 1px 3px rgba(0,0,0,0.85)",
                     }}>
                       {main}
                       {paren && (
                         <span style={{
-                          fontSize: "12px", fontWeight: 400, color: TEXT_MUTED,
+                          fontSize: "12px", fontWeight: 400, color: "#D5CFC4",
+                          textShadow: "0 1px 2px rgba(0,0,0,0.8)",
                         }}> {paren}</span>
                       )}
                     </span>
@@ -470,7 +477,8 @@ function EventsPage() {
               </div>
               <div style={{
                 fontFamily: "'Lato', sans-serif", fontSize: "13px",
-                color: TEXT_DIM, marginTop: "16px", letterSpacing: "0.5px",
+                color: "#D5CFC4", marginTop: "16px", letterSpacing: "0.5px",
+                textShadow: "0 1px 2px rgba(0,0,0,0.8)",
               }}>{evt.venue} &nbsp;·&nbsp; {evt.time}</div>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "28px" }}>
                 <div>

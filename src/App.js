@@ -416,21 +416,9 @@ function EventsPage() {
                 e.currentTarget.style.background = BG_CARD;
               }}
             >
-              <div style={{ display: "flex", justifyContent: "flex-end" }}>
-                <div style={{ textAlign: "right" }}>
-                  <div style={{
-                    fontFamily: "'Lato', sans-serif", fontSize: "36px", fontWeight: 700,
-                    letterSpacing: "1px", color: AMBER, lineHeight: 1,
-                  }}>{evt.date.split(" ")[1]}</div>
-                  <div style={{
-                    fontFamily: "'Lato', sans-serif", fontSize: "12px",
-                    color: TEXT_MUTED, letterSpacing: "2px", marginTop: "6px",
-                  }}>{evt.date.split(" ")[0]} · {evt.day}</div>
-                </div>
-              </div>
               <h3 style={{
-                fontFamily: "'Lato', sans-serif", fontSize: "clamp(30px, 9vw, 44px)", fontWeight: 700,
-                letterSpacing: "1px", color: TEXT_PRIMARY, marginTop: "12px",
+                fontFamily: "'Lato', sans-serif", fontSize: "clamp(32px, 11.5vw, 52px)", fontWeight: 700,
+                letterSpacing: "1px", color: TEXT_PRIMARY, marginTop: "0",
               }}>{evt.title}</h3>
               <div style={{
                 display: "flex", flexDirection: "column", gap: "4px", marginTop: "16px",
@@ -458,7 +446,17 @@ function EventsPage() {
                 fontFamily: "'Lato', sans-serif", fontSize: "13px",
                 color: TEXT_DIM, marginTop: "16px", letterSpacing: "0.5px",
               }}>{evt.venue} &nbsp;·&nbsp; {evt.time}</div>
-              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "24px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginTop: "28px" }}>
+                <div>
+                  <div style={{
+                    fontFamily: "'Lato', sans-serif", fontSize: "36px", fontWeight: 700,
+                    letterSpacing: "1px", color: AMBER, lineHeight: 1,
+                  }}>{evt.date.split(" ")[1]}</div>
+                  <div style={{
+                    fontFamily: "'Lato', sans-serif", fontSize: "12px",
+                    color: TEXT_MUTED, letterSpacing: "2px", marginTop: "6px",
+                  }}>{evt.date.split(" ")[0]} · {evt.day}</div>
+                </div>
                 <a href={evt.ticketLink} style={{
                   fontFamily: "'Lato', sans-serif", fontSize: "12px",
                   letterSpacing: "3px", color: AMBER_LIGHT, textDecoration: "none",

@@ -505,7 +505,6 @@ function Footer() {
       <div style={{ display: "flex", gap: "24px" }}>
         {[
           { label: "Instagram", href: "https://www.instagram.com/timetogether.prod/" },
-          { label: "SoundCloud", href: "#" },
           { label: "Email", href: "mailto:jackson@timetogetherprod.com" },
         ].map(({ label, href }) => (
           <a key={label} href={href} style={{

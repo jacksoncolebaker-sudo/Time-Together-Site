@@ -306,38 +306,34 @@ function HomePage({ setPage }) {
           }}>Next Event</span>
           <h2 style={{
             fontFamily: "'Lato', sans-serif", fontSize: "42px", fontWeight: 700,
-            letterSpacing: "3px", marginTop: "0",
-            color: AMBER_LIGHT,
-            WebkitTextFillColor: "transparent",
-            WebkitTextStroke: `1.5px ${AMBER_LIGHT}`,
+            letterSpacing: "3px", marginTop: "0", color: TEXT_PRIMARY,
           }}>
             {UPCOMING_EVENTS[0].title}
           </h2>
           <div style={{
+            marginTop: "16px", display: "flex", flexWrap: "wrap",
+            gap: "6px 24px",
+          }}>
+            {UPCOMING_EVENTS[0].artists.map((a, i) => (
+              <span key={i} style={{
+                fontFamily: "'Lato', sans-serif", fontSize: "16px",
+                fontWeight: 600, color: TEXT_PRIMARY, letterSpacing: "0.5px",
+              }}>{a}</span>
+            ))}
+          </div>
+          <div style={{
             fontFamily: "'Lato', sans-serif", fontSize: "13px",
-            color: TEXT_DIM, marginTop: "12px",
+            color: TEXT_DIM, marginTop: "32px",
             display: "flex", gap: "24px", flexWrap: "wrap",
           }}>
             <span>{UPCOMING_EVENTS[0].displayDate} — {UPCOMING_EVENTS[0].time}</span>
             <span>{UPCOMING_EVENTS[0].venue}</span>
           </div>
-          <div style={{
-            marginTop: "28px", display: "flex", gap: "12px", flexWrap: "wrap",
-          }}>
-            {UPCOMING_EVENTS[0].artists.map((a, i) => (
-              <span key={i} style={{
-                fontFamily: "'Lato', sans-serif", fontSize: "15px",
-                fontWeight: 600, color: TEXT_PRIMARY,
-                padding: "8px 16px", border: `1px solid ${BORDER}`,
-                borderRadius: "2px",
-              }}>{a}</span>
-            ))}
-          </div>
           <span style={{
             position: "absolute", top: "20px", right: "24px",
             fontFamily: "'Lato', sans-serif", fontSize: "48px", fontWeight: 700,
             color: AMBER_LIGHT, lineHeight: 1,
-            animation: "dateGlow 3s ease-in-out infinite",
+            textShadow: "0 0 25px rgba(139,26,26,0.8), 0 0 50px rgba(139,26,26,0.4)",
           }}>{UPCOMING_EVENTS[0].date.split(" ")[0]}</span>
         </div>
       </div>

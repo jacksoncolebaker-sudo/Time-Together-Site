@@ -83,6 +83,19 @@ const globalCSS = `
     75%  { top: 0%;   left: 100%; }
     100% { top: 0%;   left: 0%; }
   }
+  @keyframes frameGlow {
+    0%, 100% {
+      box-shadow:
+        0 0 22px rgba(139,26,26,0.22),
+        0 0 48px rgba(139,26,26,0.10);
+    }
+    50% {
+      box-shadow:
+        0 0 38px rgba(139,26,26,0.45),
+        0 0 80px rgba(139,26,26,0.22),
+        0 0 130px rgba(139,26,26,0.10);
+    }
+  }
 `;
 
 // ─── NAV ───
@@ -302,6 +315,7 @@ function HomePage({ setPage }) {
             border: `1px solid ${BORDER}`, borderRadius: "2px",
             background: BG_CARD, cursor: "pointer",
             transition: "all 0.4s ease", position: "relative", overflow: "hidden",
+            animation: "frameGlow 5s ease-in-out infinite",
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.borderColor = AMBER;
@@ -417,7 +431,7 @@ function EventsPage() {
                 padding: "28px 24px", background: BG_CARD,
                 border: `1px solid ${BORDER}`, borderRadius: "2px",
                 transition: "all 0.3s ease",
-                animation: `fadeInUp 0.6s ease ${i * 0.1}s both`,
+                animation: `fadeInUp 0.6s ease ${i * 0.1}s both, frameGlow 5s ease-in-out ${i * 0.1 + 0.6}s infinite`,
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = AMBER;

@@ -401,11 +401,11 @@ function EventsPage() {
             <div
               key={i}
               style={{
-                display: "flex", flexWrap: "wrap", alignItems: "center",
-                gap: "16px",
-                padding: "24px 20px", background: BG_CARD,
+                display: "flex", flexWrap: "wrap", alignItems: "flex-start",
+                gap: "20px",
+                padding: "28px 24px", background: BG_CARD,
                 border: `1px solid ${BORDER}`, borderRadius: "2px",
-                cursor: "pointer", transition: "all 0.3s ease",
+                transition: "all 0.3s ease",
                 animation: `fadeInUp 0.6s ease ${i * 0.1}s both`,
               }}
               onMouseEnter={(e) => {
@@ -417,42 +417,60 @@ function EventsPage() {
                 e.currentTarget.style.background = BG_CARD;
               }}
             >
-              <div style={{ minWidth: "80px" }}>
+              <div style={{ minWidth: "64px" }}>
                 <div style={{
-                  fontFamily: "'Lato', sans-serif", fontSize: "32px",
-                  letterSpacing: "2px", color: AMBER, lineHeight: 1,
+                  fontFamily: "'Lato', sans-serif", fontSize: "36px", fontWeight: 700,
+                  letterSpacing: "1px", color: AMBER, lineHeight: 1,
                 }}>{evt.date.split(" ")[1]}</div>
                 <div style={{
                   fontFamily: "'Lato', sans-serif", fontSize: "12px",
-                  color: TEXT_MUTED, letterSpacing: "2px", marginTop: "4px",
+                  color: TEXT_MUTED, letterSpacing: "2px", marginTop: "6px",
                 }}>{evt.date.split(" ")[0]} · {evt.day}</div>
               </div>
-              <div style={{ flex: "1 1 200px" }}>
+              <div style={{ flex: "1 1 240px", display: "flex", flexDirection: "column" }}>
                 <h3 style={{
                   fontFamily: "'Lato', sans-serif", fontSize: "22px", fontWeight: 700,
-                  letterSpacing: "2px", color: TEXT_PRIMARY,
+                  letterSpacing: "1px", color: TEXT_PRIMARY,
                 }}>{evt.title}</h3>
                 <div style={{
-                  fontFamily: "'Lato', sans-serif", fontSize: "18px",
-                  color: TEXT_DIM, fontWeight: 600, marginTop: "4px",
+                  display: "flex", flexDirection: "column", gap: "4px", marginTop: "12px",
                 }}>
-                  {evt.artists.join(" · ")} &nbsp;—&nbsp; {evt.venue}
+                  {evt.artists.map((a, j) => {
+                    const m = a.match(/^(.*?)\s*(\(.*\))\s*$/);
+                    const main = m ? m[1] : a;
+                    const paren = m ? m[2] : "";
+                    return (
+                      <span key={j} style={{
+                        fontFamily: "'Lato', sans-serif", fontSize: "16px",
+                        fontWeight: 600, color: TEXT_PRIMARY, letterSpacing: "0.3px",
+                      }}>
+                        {main}
+                        {paren && (
+                          <span style={{
+                            fontSize: "12px", fontWeight: 400, color: TEXT_MUTED,
+                          }}> {paren}</span>
+                        )}
+                      </span>
+                    );
+                  })}
                 </div>
                 <div style={{
+                  fontFamily: "'Lato', sans-serif", fontSize: "13px",
+                  color: TEXT_DIM, marginTop: "14px", letterSpacing: "0.5px",
+                }}>{evt.venue} &nbsp;·&nbsp; {evt.time}</div>
+                <a href={evt.ticketLink} style={{
+                  alignSelf: "flex-start", marginTop: "20px",
                   fontFamily: "'Lato', sans-serif", fontSize: "12px",
-                  color: TEXT_MUTED, marginTop: "4px",
-                }}>{evt.time}</div>
+                  letterSpacing: "3px", color: AMBER_LIGHT, textDecoration: "none",
+                  textTransform: "uppercase", background: "transparent",
+                  border: `1px solid ${AMBER}`, padding: "0 24px", borderRadius: "1px",
+                  minHeight: "44px", display: "inline-flex", alignItems: "center",
+                  transition: "all 0.3s",
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = AMBER; e.currentTarget.style.color = BG_DARK; }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = AMBER_LIGHT; }}
+                >Tickets</a>
               </div>
-              <a href={evt.ticketLink} style={{
-                fontFamily: "'Lato', sans-serif", fontSize: "13px",
-                letterSpacing: "3px", color: BG_DARK, textDecoration: "none",
-                textTransform: "uppercase", background: AMBER,
-                padding: "10px 20px", borderRadius: "1px",
-                transition: "background 0.3s", flexShrink: 0,
-              }}
-              onMouseEnter={(e) => e.target.style.background = AMBER_LIGHT}
-              onMouseLeave={(e) => e.target.style.background = AMBER}
-              >Tickets</a>
             </div>
           ))}
         </div>

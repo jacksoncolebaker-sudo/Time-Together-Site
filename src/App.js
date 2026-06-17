@@ -386,12 +386,10 @@ function HomePage({ setPage }) {
           position: "relative", zIndex: 1,
           textShadow: "0 1px 3px rgba(0,0,0,0.8)",
         }}>
-          Time Together is a Seattle-based music collective dedicated to creating intimate, 
-          high-quality experiences rooted in house, deep house, and electronic music culture. 
-          Born from a love of vinyl, warm sound, and real human connection on the dance floor — 
-          we curate nights that feel like home. From Ballard basements to warehouse sessions, 
-          every event is an invitation to slow down, tune in, and share something real. 
-          No pretense. No velvet ropes. Just good sound, good people, and time well spent together.
+          Cultivated in Seattle, Time Together was born out of the desire to provide meaningful
+          experiences to those who search for them. From deep balearic house to pulsating techno,
+          there is always a common factor; that is, quality always takes precedence. Whether it’s
+          in a basement, club, or warehouse, every event is embedded in intention.
         </p>
       </div>
     </div>

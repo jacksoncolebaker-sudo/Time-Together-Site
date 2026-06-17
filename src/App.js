@@ -305,33 +305,47 @@ function HomePage({ setPage }) {
             letterSpacing: "4px", color: AMBER_LIGHT, textTransform: "uppercase",
           }}>Next Event</span>
           <h2 style={{
-            fontFamily: "'Lato', sans-serif", fontSize: "42px", fontWeight: 700,
+            fontFamily: "'Lato', sans-serif", fontSize: "clamp(28px, 8vw, 42px)", fontWeight: 700,
             letterSpacing: "3px", marginTop: "0", color: TEXT_PRIMARY,
+            paddingRight: "80px",
           }}>
             {UPCOMING_EVENTS[0].title}
           </h2>
           <div style={{
-            marginTop: "16px", display: "flex", flexWrap: "wrap",
-            gap: "6px 24px",
+            marginTop: "16px", display: "flex", flexDirection: "column",
+            gap: "6px",
           }}>
-            {UPCOMING_EVENTS[0].artists.map((a, i) => (
-              <span key={i} style={{
-                fontFamily: "'Lato', sans-serif", fontSize: "16px",
-                fontWeight: 600, color: TEXT_PRIMARY, letterSpacing: "0.5px",
-              }}>{a}</span>
-            ))}
+            {UPCOMING_EVENTS[0].artists.map((a, i) => {
+              const m = a.match(/^(.*?)\s*(\(.*\))\s*$/);
+              const main = m ? m[1] : a;
+              const paren = m ? m[2] : "";
+              return (
+                <span key={i} style={{
+                  fontFamily: "'Lato', sans-serif", fontSize: "16px",
+                  fontWeight: 600, color: TEXT_PRIMARY, letterSpacing: "0.5px",
+                }}>
+                  {main}
+                  {paren && (
+                    <span style={{
+                      fontSize: "12px", fontWeight: 400,
+                      color: TEXT_DIM, letterSpacing: "0.3px",
+                    }}> {paren}</span>
+                  )}
+                </span>
+              );
+            })}
           </div>
           <div style={{
             fontFamily: "'Lato', sans-serif", fontSize: "13px",
             color: TEXT_DIM, marginTop: "32px",
             display: "flex", gap: "24px", flexWrap: "wrap",
           }}>
-            <span>{UPCOMING_EVENTS[0].displayDate} — {UPCOMING_EVENTS[0].time}</span>
+            <span>{UPCOMING_EVENTS[0].displayDate} {UPCOMING_EVENTS[0].time}</span>
             <span>{UPCOMING_EVENTS[0].venue}</span>
           </div>
           <span style={{
             position: "absolute", top: "20px", right: "24px",
-            fontFamily: "'Lato', sans-serif", fontSize: "48px", fontWeight: 700,
+            fontFamily: "'Lato', sans-serif", fontSize: "clamp(36px, 10vw, 48px)", fontWeight: 700,
             color: AMBER_LIGHT, lineHeight: 1,
             textShadow: "0 0 25px rgba(139,26,26,0.8), 0 0 50px rgba(139,26,26,0.4)",
           }}>{UPCOMING_EVENTS[0].date.split(" ")[0]}</span>

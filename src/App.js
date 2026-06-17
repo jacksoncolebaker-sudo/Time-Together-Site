@@ -155,10 +155,8 @@ function Nav({ currentPage, setPage }) {
   );
 }
 
-// ─── HOME PAGE ───
-function HomePage({ setPage }) {
-  const [loaded, setLoaded] = useState(false);
-  const [transparentLogo, setTransparentLogo] = useState(null);
+// ─── SCATTERED BACKGROUND ───
+function ScatteredBackground() {
   const [transparentPeople, setTransparentPeople] = useState(null);
   const [scatterItems] = useState(() => {
     const isMobile = window.innerWidth <= 768;
@@ -182,6 +180,58 @@ function HomePage({ setPage }) {
     }
     return kept;
   });
+
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const c = document.createElement("canvas");
+      c.width = img.width;
+      c.height = img.height;
+      const ctx = c.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      const imageData = ctx.getImageData(0, 0, c.width, c.height);
+      const data = imageData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i + 1], b = data[i + 2];
+        const brightness = (r + g + b) / 3;
+        if (brightness < 60) {
+          data[i + 3] = 0;
+        } else {
+          data[i + 3] = Math.min(255, Math.floor(brightness * 2.5));
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
+      setTransparentPeople(c.toDataURL());
+    };
+    img.src = LOGO_PEOPLE;
+  }, []);
+
+  if (!transparentPeople) return null;
+  return (
+    <>
+      {scatterItems.map((item, i) => (
+        <img key={i} src={transparentPeople} alt="" style={{
+          position: "fixed",
+          top: `${item.top}%`,
+          left: `${item.left}%`,
+          width: `${item.size}px`,
+          height: "auto",
+          transform: `rotate(${item.rotation}deg)`,
+          filter: "drop-shadow(0 0 25px rgba(255,255,255,0.5)) brightness(1.5)",
+          animation: `logoScatter ${item.duration}s ease-in-out ${item.delay}s infinite both`,
+          pointerEvents: "none",
+          zIndex: 0,
+        }} />
+      ))}
+    </>
+  );
+}
+
+// ─── HOME PAGE ───
+function HomePage({ setPage }) {
+  const [loaded, setLoaded] = useState(false);
+  const [transparentLogo, setTransparentLogo] = useState(null);
 
   // Process the wordmark logo to remove black background
   useEffect(() => {
@@ -210,52 +260,11 @@ function HomePage({ setPage }) {
     img.src = LOGO_WORDMARK;
   }, []);
 
-  // Process the people logo to remove black background
-  useEffect(() => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      const c = document.createElement("canvas");
-      c.width = img.width;
-      c.height = img.height;
-      const ctx = c.getContext("2d");
-      ctx.drawImage(img, 0, 0);
-      const imageData = ctx.getImageData(0, 0, c.width, c.height);
-      const data = imageData.data;
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i], g = data[i + 1], b = data[i + 2];
-        const brightness = (r + g + b) / 3;
-        if (brightness < 60) {
-          data[i + 3] = 0;
-        } else {
-          data[i + 3] = Math.min(255, Math.floor(brightness * 2.5));
-        }
-      }
-      ctx.putImageData(imageData, 0, 0);
-      setTransparentPeople(c.toDataURL());
-    };
-    img.src = LOGO_PEOPLE;
-  }, []);
-
   useEffect(() => { setTimeout(() => setLoaded(true), 100); }, []);
 
   return (
     <div style={{ minHeight: "100vh", position: "relative", overflow: "hidden" }}>
-      {/* Scattered people logos across entire homepage */}
-      {transparentPeople && scatterItems.map((item, i) => (
-        <img key={i} src={transparentPeople} alt="" style={{
-          position: "fixed",
-          top: `${item.top}%`,
-          left: `${item.left}%`,
-          width: `${item.size}px`,
-          height: "auto",
-          transform: `rotate(${item.rotation}deg)`,
-          filter: "drop-shadow(0 0 25px rgba(255,255,255,0.5)) brightness(1.5)",
-          animation: `logoScatter ${item.duration}s ease-in-out ${item.delay}s infinite both`,
-          pointerEvents: "none",
-          zIndex: 0,
-        }} />
-      ))}
+      <ScatteredBackground />
 
       {/* Hero */}
       <div style={{
@@ -392,8 +401,9 @@ function HomePage({ setPage }) {
 // ─── EVENTS PAGE ───
 function EventsPage() {
   return (
-    <div style={{ minHeight: "100vh", paddingTop: "120px", padding: "120px 32px 80px" }}>
-      <div style={{ maxWidth: "800px", margin: "0 auto" }}>
+    <div style={{ minHeight: "100vh", padding: "120px 32px 80px", position: "relative", overflow: "hidden" }}>
+      <ScatteredBackground />
+      <div style={{ maxWidth: "800px", margin: "0 auto", position: "relative", zIndex: 1 }}>
         <span style={{
           fontFamily: "'Lato', sans-serif", fontSize: "12px",
           letterSpacing: "4px", color: AMBER_LIGHT, textTransform: "uppercase",

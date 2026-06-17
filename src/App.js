@@ -18,7 +18,7 @@ const LOGO_WORDMARK = "data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUN
 
 // ─── PLACEHOLDER DATA ───
 const UPCOMING_EVENTS = [
-  { date: "JUL 17", displayDate: "July 17th", day: "FRI", title: "Soul of Hex", venue: "Belltown Yacht Club", artists: ["Leah York", "Better Together (b3b)", "JBarta b2b Litlikevic", "NOINTRO", "Nate"], time: "9PM - 1:30AM", ticketLink: "#" },
+  { date: "JUL 17", displayDate: "July 17th", day: "FRI", title: "Soul of Hex", venue: "Belltown Yacht Club", artists: ["CSJS (Chance & Joseph Sands)", "Better Together (Jackson Cole, Vaughn, Coe)"], time: "9PM - 1:30AM", ticketLink: "#" },
 ];
 
 // ─── STYLES ───
@@ -300,12 +300,16 @@ function HomePage({ setPage }) {
           }}
         >
           <span style={{
+            position: "absolute", top: "20px", left: "24px",
             fontFamily: "'Lato', sans-serif", fontSize: "12px",
             letterSpacing: "4px", color: AMBER_LIGHT, textTransform: "uppercase",
           }}>Next Event</span>
           <h2 style={{
             fontFamily: "'Lato', sans-serif", fontSize: "42px", fontWeight: 700,
-            letterSpacing: "3px", color: TEXT_PRIMARY, marginTop: "12px",
+            letterSpacing: "3px", marginTop: "0",
+            color: AMBER_LIGHT,
+            WebkitTextFillColor: "transparent",
+            WebkitTextStroke: `1.5px ${AMBER_LIGHT}`,
           }}>
             {UPCOMING_EVENTS[0].title}
           </h2>
@@ -318,14 +322,14 @@ function HomePage({ setPage }) {
             <span>{UPCOMING_EVENTS[0].venue}</span>
           </div>
           <div style={{
-            marginTop: "20px", display: "flex", gap: "8px", flexWrap: "wrap",
+            marginTop: "28px", display: "flex", gap: "12px", flexWrap: "wrap",
           }}>
             {UPCOMING_EVENTS[0].artists.map((a, i) => (
               <span key={i} style={{
                 fontFamily: "'Lato', sans-serif", fontSize: "15px",
                 fontWeight: 600, color: TEXT_PRIMARY,
-                padding: "4px 12px", border: `1px solid ${BORDER}`,
-                borderRadius: "1px",
+                padding: "8px 16px", border: `1px solid ${BORDER}`,
+                borderRadius: "2px",
               }}>{a}</span>
             ))}
           </div>

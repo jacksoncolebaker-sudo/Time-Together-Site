@@ -531,7 +531,7 @@ function Footer() {
       }}>© 2026 Time Together</span>
       <div style={{ display: "flex", gap: "24px" }}>
         {[
-          { label: "Instagram", href: "#" },
+          { label: "Instagram", href: "https://www.instagram.com/timetogether.prod/" },
           { label: "SoundCloud", href: "#" },
           { label: "Email", href: "mailto:jackson@timetogetherprod.com" },
         ].map(({ label, href }) => (

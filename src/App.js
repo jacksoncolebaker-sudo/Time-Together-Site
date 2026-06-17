@@ -536,10 +536,33 @@ function Footer() {
 }
 
 // ─── MAIN APP ───
+const PATHS = {
+  home: "/",
+  events: "/events",
+  gallery: "/gallery",
+  mixes: "/mixes",
+  records: "/records",
+};
+
+function pageFromPath(pathname) {
+  const entry = Object.entries(PATHS).find(([, path]) => path === pathname);
+  return entry ? entry[0] : "home";
+}
+
 export default function App() {
-  const [page, setPage] = useState("home");
+  const [page, setPage] = useState(() => pageFromPath(window.location.pathname));
+
+  useEffect(() => {
+    const onPopState = () => setPage(pageFromPath(window.location.pathname));
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, []);
 
   const changePage = (p) => {
+    const path = PATHS[p] || "/";
+    if (window.location.pathname !== path) {
+      window.history.pushState({}, "", path);
+    }
     setPage(p);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };

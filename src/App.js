@@ -102,6 +102,7 @@ const globalCSS = `
 function Nav({ currentPage, setPage }) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const transparentPeople = useTransparentPeople();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -126,12 +127,13 @@ function Nav({ currentPage, setPage }) {
     }}>
       <div
         onClick={() => { setPage("home"); setMobileOpen(false); }}
-        style={{ cursor: "pointer", display: "flex", alignItems: "center", mixBlendMode: "screen", flexShrink: 0 }}
+        style={{ cursor: "pointer", display: "flex", alignItems: "center", flexShrink: 0 }}
       >
-        <img src={LOGO_PEOPLE} alt="Time Together" style={{
-          height: "32px", width: "auto",
-          filter: "brightness(1.1) contrast(2.5)",
-        }} />
+        {transparentPeople && (
+          <img src={transparentPeople} alt="Time Together" style={{
+            height: "32px", width: "auto",
+          }} />
+        )}
       </div>
 
       {/* Nav items - scrollable on mobile */}
@@ -165,9 +167,40 @@ function Nav({ currentPage, setPage }) {
   );
 }
 
+// ─── SHARED IMAGE PROCESSING ───
+function useTransparentPeople() {
+  const [transparent, setTransparent] = useState(null);
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = () => {
+      const c = document.createElement("canvas");
+      c.width = img.width;
+      c.height = img.height;
+      const ctx = c.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      const imageData = ctx.getImageData(0, 0, c.width, c.height);
+      const data = imageData.data;
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i + 1], b = data[i + 2];
+        const brightness = (r + g + b) / 3;
+        if (brightness < 60) {
+          data[i + 3] = 0;
+        } else {
+          data[i + 3] = Math.min(255, Math.floor(brightness * 2.5));
+        }
+      }
+      ctx.putImageData(imageData, 0, 0);
+      setTransparent(c.toDataURL());
+    };
+    img.src = LOGO_PEOPLE;
+  }, []);
+  return transparent;
+}
+
 // ─── SCATTERED BACKGROUND ───
 function ScatteredBackground() {
-  const [transparentPeople, setTransparentPeople] = useState(null);
+  const transparentPeople = useTransparentPeople();
   const [scatterItems] = useState(() => {
     const isMobile = window.innerWidth <= 768;
     const candidates = Array.from({ length: isMobile ? 10 : 42 }, () => ({
@@ -190,32 +223,6 @@ function ScatteredBackground() {
     }
     return kept;
   });
-
-  useEffect(() => {
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    img.onload = () => {
-      const c = document.createElement("canvas");
-      c.width = img.width;
-      c.height = img.height;
-      const ctx = c.getContext("2d");
-      ctx.drawImage(img, 0, 0);
-      const imageData = ctx.getImageData(0, 0, c.width, c.height);
-      const data = imageData.data;
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i], g = data[i + 1], b = data[i + 2];
-        const brightness = (r + g + b) / 3;
-        if (brightness < 60) {
-          data[i + 3] = 0;
-        } else {
-          data[i + 3] = Math.min(255, Math.floor(brightness * 2.5));
-        }
-      }
-      ctx.putImageData(imageData, 0, 0);
-      setTransparentPeople(c.toDataURL());
-    };
-    img.src = LOGO_PEOPLE;
-  }, []);
 
   if (!transparentPeople) return null;
   return (

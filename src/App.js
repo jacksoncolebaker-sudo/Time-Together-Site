@@ -423,15 +423,19 @@ function EventsPage() {
                 e.currentTarget.style.background = BG_CARD;
               }}
             >
-              <span style={{
-                position: "absolute", top: 0, left: 0,
-                width: "8px", height: "8px", borderRadius: "50%",
-                background: "#FF2D4B",
-                boxShadow: "0 0 6px 2px rgba(255,45,75,0.95), 0 0 14px 5px rgba(220,20,60,0.55), 0 0 26px 9px rgba(220,20,60,0.3)",
-                transform: "translate(-50%, -50%)",
-                animation: "traceBorderCCW 6s linear infinite",
-                pointerEvents: "none", zIndex: 3,
-              }} />
+              {[...Array(7)].map((_, k) => (
+                <span key={`trace-${k}`} style={{
+                  position: "absolute", top: 0, left: 0,
+                  width: `${6 - k * 0.55}px`, height: `${6 - k * 0.55}px`,
+                  borderRadius: "50%",
+                  background: "#D11F3A",
+                  opacity: 0.5 - k * 0.06,
+                  boxShadow: `0 0 ${7 - k * 0.7}px ${2.5 - k * 0.25}px rgba(209,31,58,${0.45 - k * 0.055})`,
+                  transform: "translate(-50%, -50%)",
+                  animation: `traceBorderCCW 7s linear ${k * 0.16 - 7}s infinite`,
+                  pointerEvents: "none", zIndex: 3,
+                }} />
+              ))}
               <h3 style={{
                 fontFamily: "'Lato', sans-serif", fontSize: "clamp(32px, 11.5vw, 52px)", fontWeight: 700,
                 letterSpacing: "1px", color: TEXT_PRIMARY, marginTop: "0",

@@ -18,7 +18,7 @@ const LOGO_WORDMARK = "data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUN
 
 // ─── PLACEHOLDER DATA ───
 const UPCOMING_EVENTS = [
-  { date: "JUL 17", displayDate: "July 17th", day: "FRI", title: "Soul of Hex", venue: "Belltown Yacht Club", artists: ["CSJS (Chance & Joseph Sands)", "Better Together (Jackson Cole, Vaughn, Coe)"], time: "9PM - 1:30AM", ticketLink: "#" },
+  { date: "JUL 17", displayDate: "July 17th", day: "FRI", title: "Soul of Hex", venue: "Belltown Yacht Club", artists: ["CSJS (Chance & Joseph Sands)", "Better Together (Jackson Cole, Vaughn, Coe)"], time: "9PM - 1:30AM", ticketLink: "https://dice.fm/partner/tickets/event/92r86n-soul-of-hex-csjs-better-together-17th-jul-belltown-yacht-club-seattle-tickets?dice_id=9662476&dice_channel=web&dice_tags=organic&dice_campaign=DICE&dice_feature=mio_marketing&_branch_match_id=1316955713439644126&utm_source=web&utm_campaign=DICE&utm_medium=mio_marketing&_branch_referrer=H4sIAAAAAAAAA8soKSkottLXz8nMy9ZLyUxO1UvL1fc2MUpOTrM0TbRINLKvK0pNSy0qysxLj08qyi8vTi2ydc4oys9NBQAZC2ZIOwAAAA%3D%3D" },
 ];
 
 // ─── STYLES ───

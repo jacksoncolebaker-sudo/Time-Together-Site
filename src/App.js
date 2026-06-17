@@ -401,8 +401,7 @@ function EventsPage() {
             <div
               key={i}
               style={{
-                display: "flex", flexWrap: "wrap", alignItems: "flex-start",
-                gap: "20px",
+                display: "flex", flexDirection: "column",
                 padding: "28px 24px", background: BG_CARD,
                 border: `1px solid ${BORDER}`, borderRadius: "2px",
                 transition: "all 0.3s ease",
@@ -417,49 +416,50 @@ function EventsPage() {
                 e.currentTarget.style.background = BG_CARD;
               }}
             >
-              <div style={{ minWidth: "64px" }}>
-                <div style={{
-                  fontFamily: "'Lato', sans-serif", fontSize: "36px", fontWeight: 700,
-                  letterSpacing: "1px", color: AMBER, lineHeight: 1,
-                }}>{evt.date.split(" ")[1]}</div>
-                <div style={{
-                  fontFamily: "'Lato', sans-serif", fontSize: "12px",
-                  color: TEXT_MUTED, letterSpacing: "2px", marginTop: "6px",
-                }}>{evt.date.split(" ")[0]} · {evt.day}</div>
-              </div>
-              <div style={{ flex: "1 1 240px", display: "flex", flexDirection: "column" }}>
-                <h3 style={{
-                  fontFamily: "'Lato', sans-serif", fontSize: "22px", fontWeight: 700,
-                  letterSpacing: "1px", color: TEXT_PRIMARY,
-                }}>{evt.title}</h3>
-                <div style={{
-                  display: "flex", flexDirection: "column", gap: "4px", marginTop: "12px",
-                }}>
-                  {evt.artists.map((a, j) => {
-                    const m = a.match(/^(.*?)\s*(\(.*\))\s*$/);
-                    const main = m ? m[1] : a;
-                    const paren = m ? m[2] : "";
-                    return (
-                      <span key={j} style={{
-                        fontFamily: "'Lato', sans-serif", fontSize: "16px",
-                        fontWeight: 600, color: TEXT_PRIMARY, letterSpacing: "0.3px",
-                      }}>
-                        {main}
-                        {paren && (
-                          <span style={{
-                            fontSize: "12px", fontWeight: 400, color: TEXT_MUTED,
-                          }}> {paren}</span>
-                        )}
-                      </span>
-                    );
-                  })}
+              <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{
+                    fontFamily: "'Lato', sans-serif", fontSize: "36px", fontWeight: 700,
+                    letterSpacing: "1px", color: AMBER, lineHeight: 1,
+                  }}>{evt.date.split(" ")[1]}</div>
+                  <div style={{
+                    fontFamily: "'Lato', sans-serif", fontSize: "12px",
+                    color: TEXT_MUTED, letterSpacing: "2px", marginTop: "6px",
+                  }}>{evt.date.split(" ")[0]} · {evt.day}</div>
                 </div>
-                <div style={{
-                  fontFamily: "'Lato', sans-serif", fontSize: "13px",
-                  color: TEXT_DIM, marginTop: "14px", letterSpacing: "0.5px",
-                }}>{evt.venue} &nbsp;·&nbsp; {evt.time}</div>
+              </div>
+              <h3 style={{
+                fontFamily: "'Lato', sans-serif", fontSize: "clamp(30px, 9vw, 44px)", fontWeight: 700,
+                letterSpacing: "1px", color: TEXT_PRIMARY, marginTop: "12px",
+              }}>{evt.title}</h3>
+              <div style={{
+                display: "flex", flexDirection: "column", gap: "4px", marginTop: "16px",
+              }}>
+                {evt.artists.map((a, j) => {
+                  const m = a.match(/^(.*?)\s*(\(.*\))\s*$/);
+                  const main = m ? m[1] : a;
+                  const paren = m ? m[2] : "";
+                  return (
+                    <span key={j} style={{
+                      fontFamily: "'Lato', sans-serif", fontSize: "16px",
+                      fontWeight: 600, color: TEXT_PRIMARY, letterSpacing: "0.3px",
+                    }}>
+                      {main}
+                      {paren && (
+                        <span style={{
+                          fontSize: "12px", fontWeight: 400, color: TEXT_MUTED,
+                        }}> {paren}</span>
+                      )}
+                    </span>
+                  );
+                })}
+              </div>
+              <div style={{
+                fontFamily: "'Lato', sans-serif", fontSize: "13px",
+                color: TEXT_DIM, marginTop: "16px", letterSpacing: "0.5px",
+              }}>{evt.venue} &nbsp;·&nbsp; {evt.time}</div>
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "24px" }}>
                 <a href={evt.ticketLink} style={{
-                  alignSelf: "flex-start", marginTop: "20px",
                   fontFamily: "'Lato', sans-serif", fontSize: "12px",
                   letterSpacing: "3px", color: AMBER_LIGHT, textDecoration: "none",
                   textTransform: "uppercase", background: "transparent",

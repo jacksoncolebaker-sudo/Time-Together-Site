@@ -18,7 +18,7 @@ const LOGO_WORDMARK = "data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUN
 
 // ─── PLACEHOLDER DATA ───
 const UPCOMING_EVENTS = [
-  { date: "MAR 27", day: "FRI", title: "Time Together Presents: Burner", venue: "Roam, Ballard", artists: ["Leah York", "Better Together (b3b)", "JBarta b2b Litlikevic", "NOINTRO", "Nate"], time: "9PM – 2AM", ticketLink: "#" },
+  { date: "JUL 17", displayDate: "July 17th", day: "FRI", title: "Soul of Hex", venue: "Belltown Yacht Club", artists: ["Leah York", "Better Together (b3b)", "JBarta b2b Litlikevic", "NOINTRO", "Nate"], time: "9PM - 1:30AM", ticketLink: "#" },
 ];
 
 // ─── STYLES ───
@@ -314,7 +314,7 @@ function HomePage({ setPage }) {
             color: TEXT_DIM, marginTop: "12px",
             display: "flex", gap: "24px", flexWrap: "wrap",
           }}>
-            <span>{UPCOMING_EVENTS[0].date} — {UPCOMING_EVENTS[0].time}</span>
+            <span>{UPCOMING_EVENTS[0].displayDate} — {UPCOMING_EVENTS[0].time}</span>
             <span>{UPCOMING_EVENTS[0].venue}</span>
           </div>
           <div style={{

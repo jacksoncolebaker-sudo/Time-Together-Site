@@ -99,9 +99,6 @@ function Nav({ currentPage, setPage }) {
   const navItems = [
     { id: "home", label: "Home" },
     { id: "events", label: "Events" },
-    { id: "gallery", label: "Gallery" },
-    { id: "mixes", label: "Mixes" },
-    { id: "records", label: "Records" },
   ];
 
   return (
@@ -492,30 +489,6 @@ function EventsPage() {
   );
 }
 
-// ─── GALLERY PAGE ───
-function GalleryPage() {
-  return (
-    <div style={{ minHeight: "100vh", paddingTop: "120px", padding: "120px 32px 80px" }}>
-    </div>
-  );
-}
-
-// ─── MIXES PAGE ───
-function MixesPage() {
-  return (
-    <div style={{ minHeight: "100vh", paddingTop: "120px", padding: "120px 32px 80px" }}>
-    </div>
-  );
-}
-
-// ─── RECORDS PAGE ───
-function RecordsPage() {
-  return (
-    <div style={{ minHeight: "100vh", paddingTop: "120px", padding: "120px 32px 80px" }}>
-    </div>
-  );
-}
-
 // ─── FOOTER ───
 function Footer() {
   return (
@@ -554,9 +527,6 @@ function Footer() {
 const PATHS = {
   home: "/",
   events: "/events",
-  gallery: "/gallery",
-  mixes: "/mixes",
-  records: "/records",
 };
 
 function pageFromPath(pathname) {
@@ -586,9 +556,6 @@ export default function App() {
     switch (page) {
       case "home": return <HomePage setPage={changePage} />;
       case "events": return <EventsPage />;
-      case "gallery": return <GalleryPage />;
-      case "mixes": return <MixesPage />;
-      case "records": return <RecordsPage />;
       default: return <HomePage setPage={changePage} />;
     }
   };

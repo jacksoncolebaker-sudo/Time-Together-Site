@@ -305,9 +305,9 @@ function HomePage({ setPage }) {
             letterSpacing: "4px", color: AMBER_LIGHT, textTransform: "uppercase",
           }}>Next Event</span>
           <h2 style={{
-            fontFamily: "'Lato', sans-serif", fontSize: "clamp(28px, 8vw, 42px)", fontWeight: 700,
-            letterSpacing: "3px", marginTop: "0", color: TEXT_PRIMARY,
-            paddingRight: "80px",
+            fontFamily: "'Lato', sans-serif", fontSize: "clamp(24px, 7.5vw, 42px)", fontWeight: 700,
+            letterSpacing: "3px", marginTop: "28px", color: TEXT_PRIMARY,
+            whiteSpace: "nowrap",
           }}>
             {UPCOMING_EVENTS[0].title}
           </h2>

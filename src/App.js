@@ -492,7 +492,7 @@ function EventsPage() {
                   <div style={{
                     fontFamily: "'Lato', sans-serif", fontSize: "36px", fontWeight: 700,
                     letterSpacing: "1px", color: AMBER, lineHeight: 1,
-                  }}>{evt.date.split(" ")[1]}</div>
+                  }}>{evt.date.split(" ")[1]}th</div>
                   <div style={{
                     fontFamily: "'Lato', sans-serif", fontSize: "12px",
                     color: TEXT_MUTED, letterSpacing: "2px", marginTop: "6px",

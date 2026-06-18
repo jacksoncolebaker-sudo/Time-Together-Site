@@ -495,7 +495,8 @@ function EventsPage() {
                   }}>{evt.date.split(" ")[1]}th</div>
                   <div style={{
                     fontFamily: "'Lato', sans-serif", fontSize: "12px",
-                    color: TEXT_MUTED, letterSpacing: "2px", marginTop: "6px",
+                    color: "#FFFFFF", letterSpacing: "2px", marginTop: "6px",
+                    textShadow: "0 1px 2px rgba(0,0,0,0.8)",
                   }}>{evt.date.split(" ")[0]} · {evt.day}</div>
                 </div>
                 <a href={evt.ticketLink} style={{

@@ -18,7 +18,7 @@ const LOGO_WORDMARK = "data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUN
 
 // ─── PLACEHOLDER DATA ───
 const UPCOMING_EVENTS = [
-  { date: "JUL 17", displayDate: "July 17th", day: "FRI", title: "Soul of Hex", venue: "Belltown Yacht Club", artists: ["CSJS (Chance & Joseph Sands)", "Better Together (Jackson Cole, Vaughn, Coe)"], time: "9PM - 1:30AM", ticketLink: "https://dice.fm/partner/tickets/event/92r86n-soul-of-hex-csjs-better-together-17th-jul-belltown-yacht-club-seattle-tickets?dice_id=9662476&dice_channel=web&dice_tags=organic&dice_campaign=DICE&dice_feature=mio_marketing&_branch_match_id=1316955713439644126&utm_source=web&utm_campaign=DICE&utm_medium=mio_marketing&_branch_referrer=H4sIAAAAAAAAA8soKSkottLXz8nMy9ZLyUxO1UvL1fc2MUpOTrM0TbRINLKvK0pNSy0qysxLj08qyi8vTi2ydc4oys9NBQAZC2ZIOwAAAA%3D%3D" },
+  { date: "AUG 22", displayDate: "August 22nd", day: "SAT", title: "Byron The Aquarius", venue: "Firn", artists: ["Mike Devlin", "Jackson Cole", "Vaughn", "Coe"], time: "4PM - 11PM", ticketLink: null },
 ];
 
 // ─── STYLES ───
@@ -499,17 +499,19 @@ function EventsPage() {
                     textShadow: "0 1px 2px rgba(0,0,0,0.8)",
                   }}>{evt.date.split(" ")[0]} · {evt.day}</div>
                 </div>
-                <a href={evt.ticketLink} style={{
-                  fontFamily: "'Lato', sans-serif", fontSize: "12px",
-                  letterSpacing: "3px", color: AMBER_LIGHT, textDecoration: "none",
-                  textTransform: "uppercase", background: "transparent",
-                  border: `1px solid ${AMBER}`, padding: "0 24px", borderRadius: "1px",
-                  minHeight: "44px", display: "inline-flex", alignItems: "center",
-                  transition: "all 0.3s",
-                }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = AMBER; e.currentTarget.style.color = BG_DARK; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = AMBER_LIGHT; }}
-                >Tickets</a>
+                {evt.ticketLink && (
+                  <a href={evt.ticketLink} style={{
+                    fontFamily: "'Lato', sans-serif", fontSize: "12px",
+                    letterSpacing: "3px", color: AMBER_LIGHT, textDecoration: "none",
+                    textTransform: "uppercase", background: "transparent",
+                    border: `1px solid ${AMBER}`, padding: "0 24px", borderRadius: "1px",
+                    minHeight: "44px", display: "inline-flex", alignItems: "center",
+                    transition: "all 0.3s",
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = AMBER; e.currentTarget.style.color = BG_DARK; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = AMBER_LIGHT; }}
+                  >Tickets</a>
+                )}
               </div>
             </div>
           ))}

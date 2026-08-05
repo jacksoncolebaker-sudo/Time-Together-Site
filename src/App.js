@@ -91,6 +91,27 @@ const globalCSS = `
     75%  { top: 0%;   left: 100%; }
     100% { top: 0%;   left: 0%; }
   }
+  /* Event card meta row: date on the left, venue/tickets on the right.
+     Wraps to stacked full-width blocks on narrow screens instead of overflowing. */
+  .evt-meta-row {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    flex-wrap: wrap; gap: 16px; margin-top: 28px;
+  }
+  .evt-meta-date { min-width: 0; }
+  .evt-meta-side {
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 12px; min-width: 0;
+  }
+  .evt-venue { text-align: right; line-height: 1; }
+
+  @media (max-width: 480px) {
+    .evt-title { line-height: 1.1; }
+    .evt-meta-row { gap: 20px; margin-top: 22px; }
+    .evt-meta-side { width: 100%; align-items: stretch; }
+    .evt-venue { text-align: left; line-height: 1.4; }
+    .evt-tickets { width: 100%; justify-content: center; }
+  }
+
   @keyframes frameGlow {
     0%, 100% {
       box-shadow:
@@ -253,6 +274,101 @@ function ScatteredBackground() {
   );
 }
 
+// ─── EVENT CARD ───
+// Shared by the home page teaser and the events page so both render identically.
+function EventCard({ evt, index = 0, onClick }) {
+  return (
+    <div
+      onClick={onClick}
+      style={{
+        display: "flex", flexDirection: "column", position: "relative",
+        width: "100%", maxWidth: "800px", boxSizing: "border-box",
+        padding: "clamp(20px, 5vw, 28px) clamp(16px, 4.5vw, 24px)", background: BG_CARD,
+        border: `1px solid ${BORDER}`, borderRadius: "2px",
+        transition: "all 0.3s ease", cursor: onClick ? "pointer" : "default",
+        animation: `fadeInUp 0.6s ease ${index * 0.1}s both, frameGlow 5s ease-in-out ${index * 0.1 + 0.6}s infinite`,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = AMBER;
+        e.currentTarget.style.background = BG_CARD_HOVER;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = `rgba(139,26,26,0.15)`;
+        e.currentTarget.style.background = BG_CARD;
+      }}
+    >
+      <h3 className="evt-title" style={{
+        fontFamily: "'Lato', sans-serif", fontSize: "clamp(28px, 9vw, 52px)", fontWeight: 700,
+        letterSpacing: "1px", color: "#FFFFFF", marginTop: "0",
+        overflowWrap: "break-word", wordBreak: "break-word", minWidth: 0,
+        textShadow: "0 1px 3px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.55)",
+      }}>{evt.title}</h3>
+      <div style={{
+        display: "flex", flexDirection: "column", gap: "4px",
+        marginTop: "clamp(12px, 3.5vw, 16px)", minWidth: 0,
+      }}>
+        {evt.artists.map((a, j) => {
+          const m = a.match(/^(.*?)\s*(\(.*\))\s*$/);
+          const main = m ? m[1] : a;
+          const paren = m ? m[2] : "";
+          return (
+            <span key={j} style={{
+              fontFamily: "'Lato', sans-serif", fontSize: "16px",
+              fontWeight: 600, color: "#FFFFFF", letterSpacing: "0.3px",
+              overflowWrap: "break-word", wordBreak: "break-word",
+              textShadow: "0 1px 3px rgba(0,0,0,0.85)",
+            }}>
+              {main}
+              {paren && (
+                <span style={{
+                  fontSize: "12px", fontWeight: 400, color: "#D5CFC4",
+                  textShadow: "0 1px 2px rgba(0,0,0,0.8)",
+                }}> {paren}</span>
+              )}
+            </span>
+          );
+        })}
+      </div>
+      <div className="evt-meta-row">
+        <div className="evt-meta-date">
+          <div style={{
+            fontFamily: "'Lato', sans-serif", fontSize: "clamp(28px, 8vw, 36px)", fontWeight: 700,
+            letterSpacing: "1px", color: AMBER, lineHeight: 1,
+          }}>{ordinal(evt.date.split(" ")[1])}</div>
+          <div style={{
+            fontFamily: "'Lato', sans-serif", fontSize: "12px",
+            color: "#FFFFFF", letterSpacing: "2px", marginTop: "6px", lineHeight: 1,
+            textShadow: "0 1px 2px rgba(0,0,0,0.8)",
+          }}>{evt.date.split(" ")[0]} · {evt.day}</div>
+        </div>
+        <div className="evt-meta-side">
+          {evt.ticketLink && (
+            <a href={evt.ticketLink} className="evt-tickets" style={{
+              fontFamily: "'Lato', sans-serif", fontSize: "12px",
+              letterSpacing: "3px", color: AMBER_LIGHT, textDecoration: "none",
+              textTransform: "uppercase", background: "transparent",
+              border: `1px solid ${AMBER}`, padding: "0 24px", borderRadius: "1px",
+              minHeight: "44px", minWidth: "44px", boxSizing: "border-box",
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
+              transition: "all 0.3s",
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = AMBER; e.currentTarget.style.color = BG_DARK; }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = AMBER_LIGHT; }}
+            >Tickets</a>
+          )}
+          {/* overflowWrap:anywhere lets this break mid-run on narrow screens even though
+              the separator is welded with &nbsp; to keep the desktop spacing. */}
+          <div className="evt-venue" style={{
+            fontFamily: "'Lato', sans-serif", fontSize: "13px",
+            color: "#D5CFC4", letterSpacing: "0.5px",
+            overflowWrap: "anywhere", textShadow: "0 1px 2px rgba(0,0,0,0.8)",
+          }}>{evt.venue} &nbsp;·&nbsp; {evt.time}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── HOME PAGE ───
 function HomePage({ setPage }) {
   const [loaded, setLoaded] = useState(false);
@@ -321,80 +437,10 @@ function HomePage({ setPage }) {
 
       {/* Next Event Teaser */}
       <div style={{
-        padding: "80px 32px", display: "flex", justifyContent: "center",
+        padding: "80px clamp(12px, 4vw, 32px)", display: "flex", justifyContent: "center",
       }}>
-        <div
-          onClick={() => setPage("events")}
-          style={{
-            maxWidth: "700px", width: "100%", padding: "48px",
-            border: `1px solid ${BORDER}`, borderRadius: "2px",
-            background: BG_CARD, cursor: "pointer",
-            transition: "all 0.4s ease", position: "relative", overflow: "hidden",
-            animation: "frameGlow 5s ease-in-out infinite",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.borderColor = AMBER;
-            e.currentTarget.style.background = BG_CARD_HOVER;
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.borderColor = `rgba(139,26,26,0.15)`;
-            e.currentTarget.style.background = BG_CARD;
-          }}
-        >
-          <span style={{
-            position: "absolute", top: "20px", left: "24px",
-            fontFamily: "'Lato', sans-serif", fontSize: "12px",
-            letterSpacing: "4px", color: AMBER_LIGHT, textTransform: "uppercase",
-          }}>Next Event</span>
-          <h2 style={{
-            fontFamily: "'Lato', sans-serif", fontSize: "clamp(24px, 7.5vw, 42px)", fontWeight: 700,
-            letterSpacing: "3px", marginTop: "28px", color: "#FFFFFF",
-            whiteSpace: "nowrap",
-            textShadow: "0 1px 3px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.55)",
-          }}>
-            {UPCOMING_EVENTS[0].title}
-          </h2>
-          <div style={{
-            marginTop: "16px", display: "flex", flexDirection: "column",
-            gap: "6px",
-          }}>
-            {UPCOMING_EVENTS[0].artists.map((a, i) => {
-              const m = a.match(/^(.*?)\s*(\(.*\))\s*$/);
-              const main = m ? m[1] : a;
-              const paren = m ? m[2] : "";
-              return (
-                <span key={i} style={{
-                  fontFamily: "'Lato', sans-serif", fontSize: "16px",
-                  fontWeight: 600, color: "#FFFFFF", letterSpacing: "0.5px",
-                  textShadow: "0 1px 3px rgba(0,0,0,0.85)",
-                }}>
-                  {main}
-                  {paren && (
-                    <span style={{
-                      fontSize: "12px", fontWeight: 400,
-                      color: "#D5CFC4", letterSpacing: "0.3px",
-                      textShadow: "0 1px 2px rgba(0,0,0,0.8)",
-                    }}> {paren}</span>
-                  )}
-                </span>
-              );
-            })}
-          </div>
-          <div style={{
-            fontFamily: "'Lato', sans-serif", fontSize: "13px",
-            color: "#D5CFC4", marginTop: "32px",
-            display: "flex", gap: "24px", flexWrap: "wrap",
-            textShadow: "0 1px 2px rgba(0,0,0,0.8)",
-          }}>
-            <span>{UPCOMING_EVENTS[0].displayDate} {UPCOMING_EVENTS[0].time}</span>
-            <span>{UPCOMING_EVENTS[0].venue}</span>
-          </div>
-          <span style={{
-            position: "absolute", top: "20px", right: "24px",
-            fontFamily: "'Lato', sans-serif", fontSize: "clamp(36px, 10vw, 48px)", fontWeight: 700,
-            color: AMBER_LIGHT, lineHeight: 1,
-            textShadow: "0 0 25px rgba(139,26,26,0.8), 0 0 50px rgba(139,26,26,0.4)",
-          }}>{UPCOMING_EVENTS[0].date.split(" ")[0]}</span>
+        <div style={{ maxWidth: "800px", width: "100%", minWidth: 0 }}>
+          <EventCard evt={UPCOMING_EVENTS[0]} onClick={() => setPage("events")} />
         </div>
       </div>
 
@@ -429,9 +475,9 @@ function HomePage({ setPage }) {
 // ─── EVENTS PAGE ───
 function EventsPage() {
   return (
-    <div style={{ minHeight: "100vh", padding: "120px 32px 80px", position: "relative", overflow: "hidden" }}>
+    <div style={{ minHeight: "100vh", padding: "120px clamp(12px, 4vw, 32px) 80px", position: "relative", overflow: "hidden" }}>
       <ScatteredBackground />
-      <div style={{ maxWidth: "800px", margin: "0 auto", position: "relative", zIndex: 1 }}>
+      <div style={{ maxWidth: "800px", margin: "0 auto", minWidth: 0, position: "relative", zIndex: 1 }}>
         <span style={{
           fontFamily: "'Lato', sans-serif", fontSize: "12px",
           letterSpacing: "4px", color: AMBER_LIGHT, textTransform: "uppercase",
@@ -443,87 +489,7 @@ function EventsPage() {
 
         <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
           {UPCOMING_EVENTS.map((evt, i) => (
-            <div
-              key={i}
-              style={{
-                display: "flex", flexDirection: "column", position: "relative",
-                padding: "28px 24px", background: BG_CARD,
-                border: `1px solid ${BORDER}`, borderRadius: "2px",
-                transition: "all 0.3s ease",
-                animation: `fadeInUp 0.6s ease ${i * 0.1}s both, frameGlow 5s ease-in-out ${i * 0.1 + 0.6}s infinite`,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = AMBER;
-                e.currentTarget.style.background = BG_CARD_HOVER;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = `rgba(139,26,26,0.15)`;
-                e.currentTarget.style.background = BG_CARD;
-              }}
-            >
-              <h3 style={{
-                fontFamily: "'Lato', sans-serif", fontSize: "clamp(32px, 11.5vw, 52px)", fontWeight: 700,
-                letterSpacing: "1px", color: "#FFFFFF", marginTop: "0",
-                textShadow: "0 1px 3px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.55)",
-              }}>{evt.title}</h3>
-              <div style={{
-                display: "flex", flexDirection: "column", gap: "4px", marginTop: "16px",
-              }}>
-                {evt.artists.map((a, j) => {
-                  const m = a.match(/^(.*?)\s*(\(.*\))\s*$/);
-                  const main = m ? m[1] : a;
-                  const paren = m ? m[2] : "";
-                  return (
-                    <span key={j} style={{
-                      fontFamily: "'Lato', sans-serif", fontSize: "16px",
-                      fontWeight: 600, color: "#FFFFFF", letterSpacing: "0.3px",
-                      textShadow: "0 1px 3px rgba(0,0,0,0.85)",
-                    }}>
-                      {main}
-                      {paren && (
-                        <span style={{
-                          fontSize: "12px", fontWeight: 400, color: "#D5CFC4",
-                          textShadow: "0 1px 2px rgba(0,0,0,0.8)",
-                        }}> {paren}</span>
-                      )}
-                    </span>
-                  );
-                })}
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: "16px", marginTop: "28px" }}>
-                <div>
-                  <div style={{
-                    fontFamily: "'Lato', sans-serif", fontSize: "36px", fontWeight: 700,
-                    letterSpacing: "1px", color: AMBER, lineHeight: 1,
-                  }}>{ordinal(evt.date.split(" ")[1])}</div>
-                  <div style={{
-                    fontFamily: "'Lato', sans-serif", fontSize: "12px",
-                    color: "#FFFFFF", letterSpacing: "2px", marginTop: "6px", lineHeight: 1,
-                    textShadow: "0 1px 2px rgba(0,0,0,0.8)",
-                  }}>{evt.date.split(" ")[0]} · {evt.day}</div>
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "12px" }}>
-                  {evt.ticketLink && (
-                    <a href={evt.ticketLink} style={{
-                      fontFamily: "'Lato', sans-serif", fontSize: "12px",
-                      letterSpacing: "3px", color: AMBER_LIGHT, textDecoration: "none",
-                      textTransform: "uppercase", background: "transparent",
-                      border: `1px solid ${AMBER}`, padding: "0 24px", borderRadius: "1px",
-                      minHeight: "44px", display: "inline-flex", alignItems: "center",
-                      transition: "all 0.3s",
-                    }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = AMBER; e.currentTarget.style.color = BG_DARK; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = AMBER_LIGHT; }}
-                    >Tickets</a>
-                  )}
-                  <div style={{
-                    fontFamily: "'Lato', sans-serif", fontSize: "13px",
-                    color: "#D5CFC4", letterSpacing: "0.5px", lineHeight: 1,
-                    textAlign: "right", textShadow: "0 1px 2px rgba(0,0,0,0.8)",
-                  }}>{evt.venue} &nbsp;·&nbsp; {evt.time}</div>
-                </div>
-              </div>
-            </div>
+            <EventCard key={i} evt={evt} index={i} />
           ))}
         </div>
       </div>

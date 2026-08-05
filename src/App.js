@@ -91,8 +91,11 @@ const globalCSS = `
     75%  { top: 0%;   left: 100%; }
     100% { top: 0%;   left: 0%; }
   }
-  /* Event card meta row: date on the left, venue/tickets on the right.
-     Wraps to stacked full-width blocks on narrow screens instead of overflowing. */
+  /* Event card meta row: date bottom-left, venue/time bottom-right on the same
+     line at every width. align-items:flex-end plus line-height:1 on both text
+     blocks puts the venue/time baseline exactly on the AUG · SAT baseline.
+     flex-wrap is the safety valve: content too wide to sit side by side drops
+     to its own line rather than overflowing the card. */
   .evt-meta-row {
     display: flex; justify-content: space-between; align-items: flex-end;
     flex-wrap: wrap; gap: 16px; margin-top: 28px;
@@ -106,10 +109,7 @@ const globalCSS = `
 
   @media (max-width: 480px) {
     .evt-title { line-height: 1.1; }
-    .evt-meta-row { gap: 20px; margin-top: 22px; }
-    .evt-meta-side { width: 100%; align-items: stretch; }
-    .evt-venue { text-align: left; line-height: 1.4; }
-    .evt-tickets { width: 100%; justify-content: center; }
+    .evt-meta-row { gap: 12px; margin-top: 22px; }
   }
 
   @keyframes frameGlow {

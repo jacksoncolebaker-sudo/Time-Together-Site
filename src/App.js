@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 
 const AMBER = "#8B1A1A";
 const AMBER_LIGHT = "#A62626";
@@ -106,6 +106,9 @@ const globalCSS = `
     gap: 12px; min-width: 0;
   }
   .evt-venue { text-align: right; line-height: 1; }
+  /* Lives here, not in the inline style, so useSingleLineTitle can clear its
+     override and fall back to this target size. */
+  .evt-title { font-size: clamp(28px, 9vw, 52px); }
 
   @media (max-width: 480px) {
     .evt-title { line-height: 1.1; }
@@ -275,8 +278,58 @@ function ScatteredBackground() {
 }
 
 // ─── EVENT CARD ───
+// Smallest the title is allowed to get before we give up and let it wrap.
+const MIN_TITLE_PX = 20;
+
+// Keeps the card title on a single line. The CSS clamp still picks the target
+// size; this only scales down when the string is too long for the card at that
+// size, so desktop is untouched. If even the floor is too big it wraps rather
+// than clipping, so a very long title degrades instead of disappearing.
+function useSingleLineTitle(text) {
+  const ref = useRef(null);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const parent = el.parentElement;
+    let lastWidth = -1;
+
+    const fit = () => {
+      if (!el.isConnected) return;
+      el.style.fontSize = "";
+      el.style.whiteSpace = "nowrap";
+      let size = parseFloat(getComputedStyle(el).fontSize);
+      if (el.scrollWidth > el.clientWidth) {
+        size = Math.max(MIN_TITLE_PX, (size * el.clientWidth) / el.scrollWidth);
+        el.style.fontSize = `${size}px`;
+        // Letter-spacing is a fixed px per character and does not scale with the
+        // font, so that ratio can land a hair over. Trim until it really fits.
+        let guard = 12;
+        while (el.scrollWidth > el.clientWidth && size > MIN_TITLE_PX && guard--) {
+          size = Math.max(MIN_TITLE_PX, size - 0.5);
+          el.style.fontSize = `${size}px`;
+        }
+      }
+      if (el.scrollWidth > el.clientWidth) el.style.whiteSpace = "normal";
+    };
+
+    fit();
+    const ro = new ResizeObserver((entries) => {
+      const w = entries[0].contentRect.width;
+      if (w === lastWidth) return; // our own resize changes height, not width
+      lastWidth = w;
+      fit();
+    });
+    ro.observe(parent);
+    // Lato's metrics differ from the fallback face, so re-fit once it loads.
+    if (document.fonts) document.fonts.ready.then(fit);
+    return () => ro.disconnect();
+  }, [text]);
+  return ref;
+}
+
 // Shared by the home page teaser and the events page so both render identically.
 function EventCard({ evt, index = 0, onClick }) {
+  const titleRef = useSingleLineTitle(evt.title);
   return (
     <div
       onClick={onClick}
@@ -297,8 +350,8 @@ function EventCard({ evt, index = 0, onClick }) {
         e.currentTarget.style.background = BG_CARD;
       }}
     >
-      <h3 className="evt-title" style={{
-        fontFamily: "'Lato', sans-serif", fontSize: "clamp(28px, 9vw, 52px)", fontWeight: 700,
+      <h3 ref={titleRef} className="evt-title" style={{
+        fontFamily: "'Lato', sans-serif", fontWeight: 700,
         letterSpacing: "1px", color: "#FFFFFF", marginTop: "0",
         overflowWrap: "break-word", wordBreak: "break-word", minWidth: 0,
         textShadow: "0 1px 3px rgba(0,0,0,0.9), 0 0 12px rgba(0,0,0,0.55)",

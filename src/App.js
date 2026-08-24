@@ -1,12 +1,11 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import haloVargaPoster from "./halo-varga-poster.jpg";
 
 const AMBER = "#8B1A1A";
 const AMBER_LIGHT = "#A62626";
 const AMBER_GLOW = "rgba(139, 26, 26, 0.2)";
 const AMBER_GLOW_STRONG = "rgba(139, 26, 26, 0.4)";
 const BG_DARK = "#080808";
-const BG_CARD = "#0E0E0E";
-const BG_CARD_HOVER = "#161616";
 const TEXT_PRIMARY = "#E8E2D8";
 const TEXT_DIM = "#A09A90";
 const TEXT_MUTED = "#6B665E";
@@ -26,7 +25,7 @@ const ordinal = (n) => {
 
 // ─── PLACEHOLDER DATA ───
 const UPCOMING_EVENTS = [
-  { date: "SEP 18", displayDate: "September 18th, 2026", day: "FRI", title: "Halo Varga", venue: "Undisclosed Location", artists: ["Sherman"], time: "10:00 - 05:00", ticketLink: null },
+  { date: "SEP 18", displayDate: "September 18th, 2026", day: "FRI", title: "Halo Varga", venue: "Undisclosed Location", artists: ["Sherman"], time: "10:00 - 05:00", ticketLink: null, poster: haloVargaPoster, posterAlt: "Halo Varga with Sherman — September 18th, 2026, undisclosed location" },
 ];
 
 // Past events, newest first. Same shape as UPCOMING_EVENTS.
@@ -111,6 +110,17 @@ const globalCSS = `
     gap: 12px; min-width: 0;
   }
   .evt-venue { text-align: right; line-height: 1; }
+  /* Poster sits in the right-hand column above the venue/time line. The column
+     is as wide as that line, so centering the poster in it keeps the flyer
+     visually centred over the text rather than jammed against the card edge. */
+  .evt-poster {
+    display: block; align-self: center;
+    width: clamp(120px, 28vw, 220px); height: auto;
+    border-radius: 2px;
+    box-shadow:
+      0 10px 26px rgba(0,0,0,0.55),
+      0 0 0 1px rgba(139,26,26,0.22);
+  }
   /* Lives here, not in the inline style, so useSingleLineTitle can clear its
      override and fall back to this target size. */
   .evt-title { font-size: clamp(28px, 9vw, 52px); }
@@ -120,17 +130,72 @@ const globalCSS = `
     .evt-meta-row { gap: 12px; margin-top: 22px; }
   }
 
+  /* The card is a translucent pane, not an opaque tile: the scattered logos
+     drifting behind stay visible through the blur, so it reads as part of the
+     page rather than a box set on top of it. */
+  .evt-card {
+    background: linear-gradient(158deg,
+      rgba(22,19,19,0.74) 0%,
+      rgba(12,11,11,0.62) 52%,
+      rgba(8,8,8,0.50) 100%);
+    backdrop-filter: blur(14px) saturate(1.12);
+    -webkit-backdrop-filter: blur(14px) saturate(1.12);
+    border-radius: 2px;
+    transition: background 0.5s ease;
+  }
+  /* A masked gradient ring instead of a uniform 1px stroke: the edge catches
+     the light at the top-left, all but dissolves through the middle, and picks
+     back up at the bottom-right. A rectangle of constant brightness is what
+     makes a card look pasted on. */
+  .evt-card::before {
+    content: "";
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(158deg,
+      rgba(139,26,26,0.50) 0%,
+      rgba(139,26,26,0.14) 38%,
+      rgba(139,26,26,0.04) 62%,
+      rgba(139,26,26,0.26) 100%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    pointer-events: none;
+    transition: background 0.5s ease;
+  }
+  .evt-card:hover {
+    background: linear-gradient(158deg,
+      rgba(32,26,26,0.80) 0%,
+      rgba(17,15,15,0.68) 52%,
+      rgba(11,11,11,0.56) 100%);
+  }
+  .evt-card:hover::before {
+    background: linear-gradient(158deg,
+      rgba(139,26,26,0.85) 0%,
+      rgba(139,26,26,0.34) 38%,
+      rgba(139,26,26,0.14) 62%,
+      rgba(139,26,26,0.55) 100%);
+  }
+
+  /* The constant drop shadow seats the card in the page; only the red bloom
+     breathes, at roughly half its old strength. The insets give it a lit top
+     edge and a shaded base so it sits in the light instead of emitting it. */
   @keyframes frameGlow {
     0%, 100% {
       box-shadow:
-        0 0 22px rgba(139,26,26,0.22),
-        0 0 48px rgba(139,26,26,0.10);
+        0 18px 40px rgba(0,0,0,0.55),
+        0 0 26px rgba(139,26,26,0.10),
+        inset 0 1px 0 rgba(232,226,216,0.045),
+        inset 0 -40px 70px rgba(0,0,0,0.26);
     }
     50% {
       box-shadow:
-        0 0 38px rgba(139,26,26,0.45),
-        0 0 80px rgba(139,26,26,0.22),
-        0 0 130px rgba(139,26,26,0.10);
+        0 18px 40px rgba(0,0,0,0.55),
+        0 0 46px rgba(139,26,26,0.20),
+        0 0 90px rgba(139,26,26,0.08),
+        inset 0 1px 0 rgba(232,226,216,0.06),
+        inset 0 -40px 70px rgba(0,0,0,0.26);
     }
   }
 `;
@@ -338,22 +403,14 @@ function EventCard({ evt, index = 0, onClick }) {
   const titleRef = useSingleLineTitle(evt.title);
   return (
     <div
+      className="evt-card"
       onClick={onClick}
       style={{
         display: "flex", flexDirection: "column", position: "relative",
         width: "100%", maxWidth: "800px", boxSizing: "border-box",
-        padding: "clamp(20px, 5vw, 28px) clamp(16px, 4.5vw, 24px)", background: BG_CARD,
-        border: `1px solid ${BORDER}`, borderRadius: "2px",
-        transition: "all 0.3s ease", cursor: onClick ? "pointer" : "default",
+        padding: "clamp(20px, 5vw, 28px) clamp(16px, 4.5vw, 24px)",
+        cursor: onClick ? "pointer" : "default",
         animation: `fadeInUp 0.6s ease ${index * 0.1}s both, frameGlow 5s ease-in-out ${index * 0.1 + 0.6}s infinite`,
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.borderColor = AMBER;
-        e.currentTarget.style.background = BG_CARD_HOVER;
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.borderColor = `rgba(139,26,26,0.15)`;
-        e.currentTarget.style.background = BG_CARD;
       }}
     >
       <h3 ref={titleRef} className="evt-title" style={{
@@ -401,6 +458,9 @@ function EventCard({ evt, index = 0, onClick }) {
           }}>{evt.date.split(" ")[0]} · {evt.day}</div>
         </div>
         <div className="evt-meta-side">
+          {evt.poster && (
+            <img src={evt.poster} alt={evt.posterAlt || `${evt.title} poster`} className="evt-poster" />
+          )}
           {evt.ticketLink && (
             <a href={evt.ticketLink} className="evt-tickets" style={{
               fontFamily: "'Lato', sans-serif", fontSize: "12px",

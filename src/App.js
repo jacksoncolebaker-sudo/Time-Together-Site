@@ -110,15 +110,30 @@ const globalCSS = `
     gap: 12px; min-width: 0;
   }
   .evt-venue { text-align: right; line-height: 1; }
-  /* On a poster event the flyer is the whole card, so it runs as wide as the
-     card allows and the rest of the layout gets out of its way. */
+  /* The flyer stands on its own with no card behind it, so it carries the glow
+     itself. Insets are pointless on an <img> — the image paints over them — so
+     this is the outward bloom only, breathing against a constant drop shadow
+     that keeps the poster seated on the page. */
   .evt-poster {
     display: block;
     width: 100%; max-width: 440px; height: auto;
     border-radius: 2px;
-    box-shadow:
-      0 14px 34px rgba(0,0,0,0.55),
-      0 0 0 1px rgba(139,26,26,0.22);
+    animation: posterGlow 5s ease-in-out infinite both;
+  }
+  @keyframes posterGlow {
+    0%, 100% {
+      box-shadow:
+        0 0 0 1px rgba(139,26,26,0.45),
+        0 0 26px rgba(139,26,26,0.22),
+        0 14px 34px rgba(0,0,0,0.55);
+    }
+    50% {
+      box-shadow:
+        0 0 0 1px rgba(139,26,26,0.70),
+        0 0 44px rgba(139,26,26,0.42),
+        0 0 90px rgba(139,26,26,0.18),
+        0 14px 34px rgba(0,0,0,0.55);
+    }
   }
   /* Placeholder destination for now — see PosterEventCard. Sized past 44px so
      it stays a comfortable touch target on a phone. */
@@ -442,20 +457,35 @@ function CardShell({ index, onClick, children, align }) {
   );
 }
 
+// No card shell here: the poster sits directly on the page and carries the red
+// glow itself, so the flyer is the only frame.
 function PosterEventCard({ evt, index, onClick }) {
   // The box has nowhere to go yet — giving the event a `detailsLink` turns it
   // into a real link without touching this component. stopPropagation keeps a
   // click on the box from also firing the card's own navigation on the home page.
   const stop = (e) => e.stopPropagation();
   return (
-    <CardShell index={index} onClick={onClick} align="center">
-      <img src={evt.poster} alt={evt.posterAlt || `${evt.title} poster`} className="evt-poster" />
+    <div
+      onClick={onClick}
+      style={{
+        display: "flex", flexDirection: "column", alignItems: "center",
+        position: "relative", width: "100%", maxWidth: "800px",
+        cursor: onClick ? "pointer" : "default",
+        animation: `fadeInUp 0.6s ease ${index * 0.1}s both`,
+      }}
+    >
+      <img
+        src={evt.poster}
+        alt={evt.posterAlt || `${evt.title} poster`}
+        className="evt-poster"
+        style={{ animationDelay: `${index * 0.1 + 0.6}s` }}
+      />
       {evt.detailsLink ? (
         <a href={evt.detailsLink} className="evt-details" onClick={stop}>Ticketing &amp; Details</a>
       ) : (
         <button type="button" className="evt-details" onClick={stop}>Ticketing &amp; Details</button>
       )}
-    </CardShell>
+    </div>
   );
 }
 

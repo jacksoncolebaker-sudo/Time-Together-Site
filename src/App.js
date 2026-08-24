@@ -25,7 +25,9 @@ const ordinal = (n) => {
 };
 
 // ─── PLACEHOLDER DATA ───
-const UPCOMING_EVENTS = [];
+const UPCOMING_EVENTS = [
+  { date: "SEP 18", displayDate: "September 18th, 2026", day: "FRI", title: "Halo Varga", venue: "Undisclosed Location", artists: ["Sherman"], time: "10:00 - 05:00", ticketLink: null },
+];
 
 // Past events, newest first. Same shape as UPCOMING_EVENTS.
 const PAST_EVENTS = [

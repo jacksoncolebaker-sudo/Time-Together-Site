@@ -23,14 +23,74 @@ const ordinal = (n) => {
   return `${d}${suffix}`;
 };
 
-// ─── PLACEHOLDER DATA ───
-const UPCOMING_EVENTS = [
-  { date: "SEP 18", displayDate: "September 18th, 2026", day: "FRI", title: "Halo Varga", venue: "Undisclosed Location", artists: ["Sherman"], time: "10:00 - 05:00", ticketLink: null, poster: haloVargaPoster, posterAlt: "Halo Varga with Sherman — September 18th, 2026, undisclosed location" },
+// ============================================
+// EVENTS — one entry per event. To run a new event: add an entry,
+// set the old entry's applicationsOpen to false.
+// ============================================
+// `past: true` moves an entry from the Events page to the Archive.
+// The card-render keys (cardDate, day, artists, time, poster) are separate
+// from `date`: `date` is the human display string, `cardDate` is the
+// "MMM DD" token the archive card splits for its big ordinal.
+const EVENTS = [
+  {
+    id: "halo-varga",
+    title: "Halo Varga",
+    date: "September 18th, 2026",
+    dateISO: "2026-09-18",
+    venue: "Undisclosed Location",
+    applicationsOpen: true,
+    applyIntro: [
+      "Halo Varga plays an extended set, with Sherman opening. Doors at 10:00, close at 05:00.",
+      "This is an application, not a ticket sale. Everyone who applies hears back by email, and approved applicants receive the address and payment details a few days before the event.",
+    ],
+    extraRules: [
+      "No re-entry once you have left the building.",
+    ],
+    paymentLink: "",
+    past: false,
+    cardDate: "SEP 18",
+    day: "FRI",
+    artists: ["Sherman"],
+    time: "10:00 - 05:00",
+    ticketLink: null,
+    poster: haloVargaPoster,
+    posterAlt: "Halo Varga with Sherman — September 18th, 2026, undisclosed location",
+  },
+  {
+    id: "byron-the-aquarius",
+    title: "Byron The Aquarius",
+    date: "August 22nd, 2026",
+    dateISO: "2026-08-22",
+    venue: "Firn",
+    applicationsOpen: false,
+    applyIntro: [],
+    extraRules: [],
+    paymentLink: "",
+    past: true,
+    cardDate: "AUG 22",
+    day: "SAT",
+    artists: ["Mike Devlin", "Jackson Cole", "Vaughn", "Coe"],
+    time: "4PM - 11PM",
+    ticketLink: null,
+  },
 ];
 
-// Past events, newest first. Same shape as UPCOMING_EVENTS.
-const PAST_EVENTS = [
-  { date: "AUG 22", displayDate: "August 22nd", day: "SAT", title: "Byron The Aquarius", venue: "Firn", artists: ["Mike Devlin", "Jackson Cole", "Vaughn", "Coe"], time: "4PM - 11PM", ticketLink: null },
+// ============================================
+// APPLICATION FORM SETTINGS
+// ============================================
+const FORM_ENDPOINT = "https://api.web3forms.com/submit";
+const FORM_ACCESS_KEY = "REPLACE_WITH_WEB3FORMS_KEY";
+const CONTACT_EMAIL = "REPLACE_WITH_CONTACT_EMAIL";
+
+const APPLY_BUTTON_LABEL = "Ticketing & Details";
+const APPLY_CLOSED_LABEL = "Applications closed";
+
+// Rules shown for EVERY event, before the event's extraRules
+const HOUSE_RULES = [
+  "21+ with valid ID. No exceptions.",
+  "No photos or video on the dancefloor.",
+  "Applications are read individually. Approval is not guaranteed.",
+  "Treat the space, the staff, and each other with respect.",
 ];
 
 // ─── STYLES ───
@@ -150,6 +210,13 @@ const globalCSS = `
   }
   .evt-details:hover, .evt-details:focus-visible {
     background: ${AMBER}; border-color: ${AMBER}; color: ${BG_DARK};
+  }
+  /* Dimmed with the muted text colour rather than the opacity property, so the
+     label and border fade together and nothing underneath shows through. */
+  .evt-details:disabled,
+  .evt-details:disabled:hover {
+    background: transparent; border-color: ${BORDER};
+    color: ${TEXT_MUTED}; cursor: default;
   }
   /* Lives here, not in the inline style, so useSingleLineTitle can clear its
      override and fall back to this target size. */
@@ -431,9 +498,9 @@ function useSingleLineTitle(text) {
 // Shared by the home page teaser and the events page so both render identically.
 // An event with a poster shows the poster and nothing else; one without falls
 // back to the typeset layout, which is what the archive still uses.
-function EventCard({ evt, index = 0, onClick }) {
+function EventCard({ evt, index = 0, onClick, navigate }) {
   return evt.poster
-    ? <PosterEventCard evt={evt} index={index} onClick={onClick} />
+    ? <PosterEventCard evt={evt} index={index} onClick={onClick} navigate={navigate} />
     : <TypesetEventCard evt={evt} index={index} onClick={onClick} />;
 }
 
@@ -459,11 +526,13 @@ function CardShell({ index, onClick, children, align }) {
 
 // No card shell here: the poster sits directly on the page and carries the red
 // glow itself, so the flyer is the only frame.
-function PosterEventCard({ evt, index, onClick }) {
-  // The box has nowhere to go yet — giving the event a `detailsLink` turns it
-  // into a real link without touching this component. stopPropagation keeps a
-  // click on the box from also firing the card's own navigation on the home page.
-  const stop = (e) => e.stopPropagation();
+function PosterEventCard({ evt, index, onClick, navigate }) {
+  // stopPropagation keeps a click on the box from also firing the card's own
+  // navigation on the home page.
+  const openApply = (e) => {
+    e.stopPropagation();
+    if (navigate) navigate(`/apply?event=${evt.id}`);
+  };
   return (
     <div
       onClick={onClick}
@@ -480,10 +549,21 @@ function PosterEventCard({ evt, index, onClick }) {
         className="evt-poster"
         style={{ animationDelay: `${index * 0.1 + 0.6}s` }}
       />
-      {evt.detailsLink ? (
-        <a href={evt.detailsLink} className="evt-details" onClick={stop}>Ticketing &amp; Details</a>
+      {evt.applicationsOpen ? (
+        <button type="button" className="evt-details" onClick={openApply}>
+          {APPLY_BUTTON_LABEL}
+        </button>
       ) : (
-        <button type="button" className="evt-details" onClick={stop}>Ticketing &amp; Details</button>
+        // Dimmed with the site's muted text colour rather than the opacity
+        // property, so the border and label fade together.
+        <button
+          type="button"
+          className="evt-details"
+          disabled
+          onClick={(e) => e.stopPropagation()}
+        >
+          {APPLY_CLOSED_LABEL}
+        </button>
       )}
     </div>
   );
@@ -530,12 +610,12 @@ function TypesetEventCard({ evt, index = 0, onClick }) {
           <div style={{
             fontFamily: "'Lato', sans-serif", fontSize: "clamp(28px, 8vw, 36px)", fontWeight: 700,
             letterSpacing: "1px", color: AMBER, lineHeight: 1,
-          }}>{ordinal(evt.date.split(" ")[1])}</div>
+          }}>{ordinal(evt.cardDate.split(" ")[1])}</div>
           <div style={{
             fontFamily: "'Lato', sans-serif", fontSize: "12px",
             color: "#FFFFFF", letterSpacing: "2px", marginTop: "6px", lineHeight: 1,
             textShadow: "0 1px 2px rgba(0,0,0,0.8)",
-          }}>{evt.date.split(" ")[0]} · {evt.day}</div>
+          }}>{evt.cardDate.split(" ")[0]} · {evt.day}</div>
         </div>
         <div className="evt-meta-side">
           {evt.ticketLink && (
@@ -569,6 +649,7 @@ function TypesetEventCard({ evt, index = 0, onClick }) {
 function HomePage({ setPage }) {
   const [loaded, setLoaded] = useState(false);
   const [transparentLogo, setTransparentLogo] = useState(null);
+  const upcoming = EVENTS.filter((e) => !e.past);
 
   // Process the wordmark logo to remove black background
   useEffect(() => {
@@ -632,12 +713,12 @@ function HomePage({ setPage }) {
       </div>
 
       {/* Next Event Teaser — hidden while there is nothing upcoming. */}
-      {UPCOMING_EVENTS.length > 0 && (
+      {upcoming.length > 0 && (
         <div style={{
           padding: "80px clamp(12px, 4vw, 32px)", display: "flex", justifyContent: "center",
         }}>
           <div style={{ maxWidth: "800px", width: "100%", minWidth: 0 }}>
-            <EventCard evt={UPCOMING_EVENTS[0]} onClick={() => setPage("events")} />
+            <EventCard evt={upcoming[0]} onClick={() => setPage("events")} navigate={setPage} />
           </div>
         </div>
       )}
@@ -671,7 +752,8 @@ function HomePage({ setPage }) {
 }
 
 // ─── EVENTS PAGE ───
-function EventsPage() {
+function EventsPage({ navigate }) {
+  const upcoming = EVENTS.filter((e) => !e.past);
   return (
     <div style={{ minHeight: "100vh", padding: "120px clamp(12px, 4vw, 32px) 80px", position: "relative", overflow: "hidden" }}>
       <ScatteredBackground />
@@ -685,10 +767,10 @@ function EventsPage() {
           letterSpacing: "6px", color: TEXT_PRIMARY, marginTop: "8px", marginBottom: "48px",
         }}>Upcoming Events</h1>
 
-        {UPCOMING_EVENTS.length > 0 ? (
+        {upcoming.length > 0 ? (
           <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-            {UPCOMING_EVENTS.map((evt, i) => (
-              <EventCard key={i} evt={evt} index={i} />
+            {upcoming.map((evt, i) => (
+              <EventCard key={evt.id} evt={evt} index={i} navigate={navigate} />
             ))}
           </div>
         ) : (
@@ -703,7 +785,8 @@ function EventsPage() {
 }
 
 // ─── ARCHIVE PAGE ───
-function ArchivePage() {
+function ArchivePage({ navigate }) {
+  const past = EVENTS.filter((e) => e.past);
   return (
     <div style={{ minHeight: "100vh", padding: "120px clamp(12px, 4vw, 32px) 80px", position: "relative", overflow: "hidden" }}>
       <ScatteredBackground />
@@ -717,10 +800,10 @@ function ArchivePage() {
           letterSpacing: "6px", color: TEXT_PRIMARY, marginTop: "8px", marginBottom: "48px",
         }}>Past Events</h1>
 
-        {PAST_EVENTS.length > 0 ? (
+        {past.length > 0 ? (
           <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-            {PAST_EVENTS.map((evt, i) => (
-              <EventCard key={i} evt={evt} index={i} />
+            {past.map((evt, i) => (
+              <EventCard key={evt.id} evt={evt} index={i} navigate={navigate} />
             ))}
           </div>
         ) : (
@@ -729,6 +812,354 @@ function ArchivePage() {
             letterSpacing: "2px", color: TEXT_MUTED, textTransform: "uppercase",
           }}>Nothing archived yet</p>
         )}
+      </div>
+    </div>
+  );
+}
+
+// ─── APPLY PAGE ───
+// Reached only from the "Ticketing & Details" box and by direct URL — there is
+// deliberately no nav tab for it. "/apply" alone resolves to the soonest open
+// event; "/apply?event=<id>" pins a specific one.
+const applyLabelStyle = {
+  fontFamily: "'Lato', sans-serif", fontSize: "13px", fontWeight: 700,
+  letterSpacing: "2px", textTransform: "uppercase", color: TEXT_PRIMARY,
+  display: "block", marginBottom: "8px",
+};
+// 16px is the floor: anything smaller and iOS Safari zooms the page on focus.
+const applyInputStyle = {
+  width: "100%", fontFamily: "'Lato', sans-serif", fontSize: "16px",
+  color: TEXT_PRIMARY, background: BG_DARK,
+  border: `1px solid ${BORDER}`, borderRadius: "2px",
+  padding: "11px 14px", minHeight: "44px", boxSizing: "border-box",
+};
+const applyOptionalStyle = {
+  fontFamily: "'Lato', sans-serif", fontSize: "11px", fontWeight: 400,
+  letterSpacing: "1px", color: TEXT_MUTED, textTransform: "none",
+  marginLeft: "8px",
+};
+const applyErrorStyle = {
+  fontFamily: "'Lato', sans-serif", fontSize: "13px",
+  color: AMBER_LIGHT, marginTop: "6px",
+};
+const applyFieldStyle = { marginBottom: "24px" };
+const applyBodyStyle = {
+  fontFamily: "'Lato', sans-serif", fontSize: "16px", lineHeight: 1.8,
+  color: TEXT_PRIMARY, marginBottom: "16px",
+};
+const applyCheckboxStyle = {
+  width: "24px", height: "24px", minWidth: "24px", minHeight: "24px",
+  fontSize: "16px", accentColor: AMBER, cursor: "pointer", flexShrink: 0,
+  marginTop: "2px",
+};
+const applyCheckboxLabelStyle = {
+  fontFamily: "'Lato', sans-serif", fontSize: "15px", lineHeight: 1.6,
+  color: TEXT_DIM, cursor: "pointer",
+};
+
+function ApplyPage() {
+  const params = new URLSearchParams(window.location.search);
+  const requestedId = params.get("event");
+  // Soonest-first, so the fallback and the "another event is open" line both
+  // point at the same entry.
+  const openEvents = EVENTS
+    .filter((e) => e.applicationsOpen)
+    .slice()
+    .sort((a, b) => a.dateISO.localeCompare(b.dateISO));
+  const resolvedEvent =
+    (requestedId && EVENTS.find((e) => e.id === requestedId)) || openEvents[0];
+
+  const [formData, setFormData] = useState({
+    fullName: "", email: "", phone: "", instagram: "",
+    pastEvents: "", references: "",
+    emailOptIn: false, smsOptIn: false, company: "",
+  });
+  const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+
+  const update = (key) => (e) => {
+    const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
+    setFormData((prev) => ({ ...prev, [key]: value }));
+    setErrors((prev) => {
+      if (!prev[key] && !(key === "phone" && prev.smsOptIn)) return prev;
+      const next = { ...prev, [key]: "" };
+      // The sms error is really about the phone field, so typing a number
+      // clears it too rather than waiting for another submit.
+      if (key === "phone") next.smsOptIn = "";
+      return next;
+    });
+  };
+
+  const validate = () => {
+    const next = {};
+    const REQUIRED_MSG = "This field is required.";
+    if (!formData.fullName.trim()) next.fullName = REQUIRED_MSG;
+    if (!formData.email.trim()) next.email = REQUIRED_MSG;
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      next.email = "Enter a valid email address.";
+    }
+    if (!formData.instagram.trim()) next.instagram = REQUIRED_MSG;
+    if (!formData.pastEvents.trim()) next.pastEvents = REQUIRED_MSG;
+    if (formData.smsOptIn && !formData.phone.trim()) {
+      next.smsOptIn = "Add a phone number to receive texts, or uncheck this box.";
+    }
+    return next;
+  };
+
+  const handleSubmit = async () => {
+    // Honeypot: a bot filled the hidden field. Show success, send nothing.
+    if (formData.company) {
+      setSubmitted(true);
+      return;
+    }
+    const found = validate();
+    setErrors(found);
+    if (Object.keys(found).length > 0) return;
+
+    setSubmitting(true);
+    setSubmitError("");
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: FORM_ACCESS_KEY,
+          subject: "New application — " + resolvedEvent.title,
+          event_id: resolvedEvent.id,
+          event_title: resolvedEvent.title,
+          event_date: resolvedEvent.date,
+          full_name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          instagram: formData.instagram,
+          past_events: formData.pastEvents,
+          references: formData.references,
+          email_opt_in: formData.emailOptIn,
+          sms_opt_in: formData.smsOptIn,
+        }),
+      });
+      if (!res.ok) throw new Error("Submission rejected");
+      setSubmitted(true);
+    } catch (err) {
+      // Nothing is cleared here — the user's answers stay in formData.
+      setSubmitError("Something went wrong. Email us directly at " + CONTACT_EMAIL);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const otherOpen = openEvents.find((e) => !resolvedEvent || e.id !== resolvedEvent.id);
+
+  return (
+    <div style={{ minHeight: "100vh", padding: "120px clamp(12px, 4vw, 32px) 80px", position: "relative", overflow: "hidden" }}>
+      <ScatteredBackground />
+      <div style={{ maxWidth: "800px", margin: "0 auto", minWidth: 0, position: "relative", zIndex: 1 }}>
+        <span style={{
+          fontFamily: "'Lato', sans-serif", fontSize: "12px",
+          letterSpacing: "4px", color: AMBER_LIGHT, textTransform: "uppercase",
+        }}>Apply</span>
+
+        {/* STATE A — nothing resolvable and nothing open */}
+        {!resolvedEvent && (
+          <>
+            <h1 style={{
+              fontFamily: "'Lato', sans-serif", fontSize: "clamp(30px, 5vw, 52px)", fontWeight: 700,
+              letterSpacing: "4px", color: TEXT_PRIMARY, marginTop: "8px", marginBottom: "24px",
+            }}>No open applications right now</h1>
+            <p style={applyBodyStyle}>
+              Nothing is taking applications at the moment. Check back soon — the next event goes up here first.
+            </p>
+          </>
+        )}
+
+        {/* STATE B — the event exists but is no longer taking applications */}
+        {resolvedEvent && !resolvedEvent.applicationsOpen && (
+          <>
+            <h1 style={{
+              fontFamily: "'Lato', sans-serif", fontSize: "clamp(30px, 5vw, 52px)", fontWeight: 700,
+              letterSpacing: "4px", color: TEXT_PRIMARY, marginTop: "8px", marginBottom: "24px",
+            }}>Applications for this event have closed</h1>
+            <p style={applyBodyStyle}>
+              {resolvedEvent.title} &nbsp;·&nbsp; {resolvedEvent.date}
+            </p>
+            {otherOpen && (
+              <p style={applyBodyStyle}>
+                Applications are open for {otherOpen.title} on {otherOpen.date}.
+              </p>
+            )}
+          </>
+        )}
+
+        {/* STATE C — open for applications */}
+        {resolvedEvent && resolvedEvent.applicationsOpen && (
+          <>
+            <h1 style={{
+              fontFamily: "'Lato', sans-serif", fontSize: "clamp(30px, 5vw, 52px)", fontWeight: 700,
+              letterSpacing: "4px", color: TEXT_PRIMARY, marginTop: "8px", marginBottom: "8px",
+            }}>{resolvedEvent.title}</h1>
+            <p style={{
+              fontFamily: "'Lato', sans-serif", fontSize: "14px",
+              letterSpacing: "2px", color: TEXT_DIM, textTransform: "uppercase",
+              marginBottom: "32px",
+            }}>{resolvedEvent.date}</p>
+
+            {submitted ? (
+              <div>
+                <p style={applyBodyStyle}>
+                  Thank you — your application for {resolvedEvent.title} is in. We read every one and reply by email.
+                </p>
+                <p style={applyBodyStyle}>
+                  {"Check your spam folder — our reply may land there. Add us to your contacts so you don't miss it."}
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* Event-specific details */}
+                {resolvedEvent.applyIntro.map((line, i) => (
+                  <p key={i} style={applyBodyStyle}>{line}</p>
+                ))}
+
+                {/* Fields */}
+                <div style={{ marginTop: "40px" }}>
+                  <div style={applyFieldStyle}>
+                    <label htmlFor="fullName" style={applyLabelStyle}>Full Name</label>
+                    <input
+                      id="fullName" name="fullName" type="text" autoComplete="name"
+                      value={formData.fullName} onChange={update("fullName")}
+                      style={applyInputStyle}
+                    />
+                    {errors.fullName && <div style={applyErrorStyle}>{errors.fullName}</div>}
+                  </div>
+
+                  <div style={applyFieldStyle}>
+                    <label htmlFor="email" style={applyLabelStyle}>Email</label>
+                    <input
+                      id="email" name="email" type="email" autoComplete="email" inputMode="email"
+                      value={formData.email} onChange={update("email")}
+                      style={applyInputStyle}
+                    />
+                    {errors.email && <div style={applyErrorStyle}>{errors.email}</div>}
+                  </div>
+
+                  <div style={applyFieldStyle}>
+                    <label htmlFor="phone" style={applyLabelStyle}>
+                      Phone Number<span style={applyOptionalStyle}>optional</span>
+                    </label>
+                    <input
+                      id="phone" name="phone" type="tel" autoComplete="tel" inputMode="tel"
+                      value={formData.phone} onChange={update("phone")}
+                      style={applyInputStyle}
+                    />
+                    {errors.phone && <div style={applyErrorStyle}>{errors.phone}</div>}
+                  </div>
+
+                  <div style={applyFieldStyle}>
+                    <label htmlFor="instagram" style={applyLabelStyle}>Instagram</label>
+                    <input
+                      id="instagram" name="instagram" type="text" placeholder="@handle"
+                      value={formData.instagram} onChange={update("instagram")}
+                      style={applyInputStyle}
+                    />
+                    {errors.instagram && <div style={applyErrorStyle}>{errors.instagram}</div>}
+                  </div>
+
+                  <div style={applyFieldStyle}>
+                    <label htmlFor="pastEvents" style={applyLabelStyle}>
+                      What sort of events have you attended in the past?
+                    </label>
+                    <textarea
+                      id="pastEvents" name="pastEvents" rows={4}
+                      value={formData.pastEvents} onChange={update("pastEvents")}
+                      style={{ ...applyInputStyle, resize: "vertical", lineHeight: 1.6 }}
+                    />
+                    {errors.pastEvents && <div style={applyErrorStyle}>{errors.pastEvents}</div>}
+                  </div>
+
+                  <div style={applyFieldStyle}>
+                    <label htmlFor="references" style={applyLabelStyle}>
+                      References to people associated with Time Together or Divine Timing
+                      <span style={applyOptionalStyle}>optional</span>
+                    </label>
+                    <textarea
+                      id="references" name="references" rows={2}
+                      value={formData.references} onChange={update("references")}
+                      style={{ ...applyInputStyle, resize: "vertical", lineHeight: 1.6 }}
+                    />
+                    {errors.references && <div style={applyErrorStyle}>{errors.references}</div>}
+                  </div>
+                </div>
+
+                {/* Rules — quieter than the form on purpose */}
+                <div style={{ marginTop: "8px", marginBottom: "32px" }}>
+                  <h2 style={{
+                    fontFamily: "'Lato', sans-serif", fontSize: "12px", fontWeight: 700,
+                    letterSpacing: "3px", color: TEXT_DIM, textTransform: "uppercase",
+                    marginBottom: "12px",
+                  }}>House rules</h2>
+                  <ul style={{ paddingLeft: "18px" }}>
+                    {HOUSE_RULES.concat(resolvedEvent.extraRules).map((rule, i) => (
+                      <li key={i} style={{
+                        fontFamily: "'Lato', sans-serif", fontSize: "13px",
+                        lineHeight: 1.7, color: TEXT_MUTED, marginBottom: "4px",
+                      }}>{rule}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Opt-ins — both off by default */}
+                <div style={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
+                  <input
+                    id="emailOptIn" name="emailOptIn" type="checkbox"
+                    checked={formData.emailOptIn} onChange={update("emailOptIn")}
+                    style={applyCheckboxStyle}
+                  />
+                  <label htmlFor="emailOptIn" style={applyCheckboxLabelStyle}>
+                    Email me about future Time Together events.
+                  </label>
+                </div>
+                <div style={{ display: "flex", gap: "12px", marginBottom: "8px" }}>
+                  <input
+                    id="smsOptIn" name="smsOptIn" type="checkbox"
+                    checked={formData.smsOptIn} onChange={update("smsOptIn")}
+                    style={applyCheckboxStyle}
+                  />
+                  <label htmlFor="smsOptIn" style={applyCheckboxLabelStyle}>
+                    Text me about future Time Together events at the number above. Message and data rates may apply. Message frequency varies. Reply STOP to unsubscribe.
+                  </label>
+                </div>
+                {errors.smsOptIn && <div style={applyErrorStyle}>{errors.smsOptIn}</div>}
+
+                {submitError && (
+                  <div style={{ ...applyErrorStyle, marginTop: "24px" }}>{submitError}</div>
+                )}
+
+                <div>
+                  <button
+                    type="button"
+                    className="evt-details"
+                    onClick={handleSubmit}
+                    disabled={submitting}
+                  >
+                    {submitting ? "Sending…" : "Submit application"}
+                  </button>
+                </div>
+              </>
+            )}
+          </>
+        )}
+
+        {/* Honeypot — off-screen, never focused, never read aloud. */}
+        <div style={{ position: "absolute", left: -9999 }}>
+          <label htmlFor="company" style={applyLabelStyle}>Company</label>
+          <input
+            id="company" name="company" type="text"
+            value={formData.company} onChange={update("company")}
+            tabIndex={-1} autoComplete="off" aria-hidden="true"
+            style={{ fontSize: "16px" }}
+          />
+        </div>
       </div>
     </div>
   );
@@ -772,8 +1203,11 @@ const PATHS = {
   home: "/",
   events: "/events",
   archive: "/archive",
+  apply: "/apply",
 };
 
+// Matches on pathname alone, so "/apply?event=halo-varga" still resolves to the
+// apply page. Callers must strip the query before calling.
 function pageFromPath(pathname) {
   const entry = Object.entries(PATHS).find(([, path]) => path === pathname);
   return entry ? entry[0] : "home";
@@ -781,27 +1215,40 @@ function pageFromPath(pathname) {
 
 export default function App() {
   const [page, setPage] = useState(() => pageFromPath(window.location.pathname));
+  const [route, setRoute] = useState(() => window.location.pathname + window.location.search);
 
   useEffect(() => {
-    const onPopState = () => setPage(pageFromPath(window.location.pathname));
+    const onPopState = () => {
+      setPage(pageFromPath(window.location.pathname));
+      setRoute(window.location.pathname + window.location.search);
+    };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
-  const changePage = (p) => {
-    const path = PATHS[p] || "/";
-    if (window.location.pathname !== path) {
-      window.history.pushState({}, "", path);
+  // Accepts either a PATHS key ("events") or a full path that may carry a query
+  // ("/apply?event=halo-varga"). The page is always resolved from the pathname.
+  const changePage = (target) => {
+    const isPath = typeof target === "string" && target.startsWith("/");
+    const url = isPath ? target : (PATHS[target] || "/");
+    const pathname = url.split("?")[0];
+    const p = isPath ? pageFromPath(pathname) : target;
+    if (window.location.pathname + window.location.search !== url) {
+      window.history.pushState({}, "", url);
     }
     setPage(p);
+    setRoute(url);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const renderPage = () => {
     switch (page) {
       case "home": return <HomePage setPage={changePage} />;
-      case "events": return <EventsPage />;
-      case "archive": return <ArchivePage />;
+      case "events": return <EventsPage navigate={changePage} />;
+      case "archive": return <ArchivePage navigate={changePage} />;
+      // Keyed on the query so switching between two events' forms remounts
+      // rather than reusing the first one's resolved event and field state.
+      case "apply": return <ApplyPage key={route} />;
       default: return <HomePage setPage={changePage} />;
     }
   };

@@ -29,6 +29,9 @@ const UPCOMING_EVENTS = [
   { date: "AUG 22", displayDate: "August 22nd", day: "SAT", title: "Byron The Aquarius", venue: "Firn", artists: ["Mike Devlin", "Jackson Cole", "Vaughn", "Coe"], time: "4PM - 11PM", ticketLink: null },
 ];
 
+// Past events, newest first. Same shape as UPCOMING_EVENTS.
+const PAST_EVENTS = [];
+
 // ─── STYLES ───
 const globalCSS = `
   @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
@@ -145,6 +148,7 @@ function Nav({ currentPage, setPage }) {
   const navItems = [
     { id: "home", label: "Home" },
     { id: "events", label: "Events" },
+    { id: "archive", label: "Archive" },
   ];
 
   return (
@@ -550,6 +554,38 @@ function EventsPage() {
   );
 }
 
+// ─── ARCHIVE PAGE ───
+function ArchivePage() {
+  return (
+    <div style={{ minHeight: "100vh", padding: "120px clamp(12px, 4vw, 32px) 80px", position: "relative", overflow: "hidden" }}>
+      <ScatteredBackground />
+      <div style={{ maxWidth: "800px", margin: "0 auto", minWidth: 0, position: "relative", zIndex: 1 }}>
+        <span style={{
+          fontFamily: "'Lato', sans-serif", fontSize: "12px",
+          letterSpacing: "4px", color: AMBER_LIGHT, textTransform: "uppercase",
+        }}>What's Been</span>
+        <h1 style={{
+          fontFamily: "'Lato', sans-serif", fontSize: "clamp(36px, 6vw, 64px)", fontWeight: 700,
+          letterSpacing: "6px", color: TEXT_PRIMARY, marginTop: "8px", marginBottom: "48px",
+        }}>Past Events</h1>
+
+        {PAST_EVENTS.length > 0 ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+            {PAST_EVENTS.map((evt, i) => (
+              <EventCard key={i} evt={evt} index={i} />
+            ))}
+          </div>
+        ) : (
+          <p style={{
+            fontFamily: "'Lato', sans-serif", fontSize: "14px",
+            letterSpacing: "2px", color: TEXT_MUTED, textTransform: "uppercase",
+          }}>Nothing archived yet</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── FOOTER ───
 function Footer() {
   return (
@@ -587,6 +623,7 @@ function Footer() {
 const PATHS = {
   home: "/",
   events: "/events",
+  archive: "/archive",
 };
 
 function pageFromPath(pathname) {
@@ -616,6 +653,7 @@ export default function App() {
     switch (page) {
       case "home": return <HomePage setPage={changePage} />;
       case "events": return <EventsPage />;
+      case "archive": return <ArchivePage />;
       default: return <HomePage setPage={changePage} />;
     }
   };

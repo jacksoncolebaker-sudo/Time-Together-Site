@@ -79,8 +79,8 @@ const EVENTS = [
 // APPLICATION FORM SETTINGS
 // ============================================
 const FORM_ENDPOINT = "https://api.web3forms.com/submit";
-const FORM_ACCESS_KEY = "REPLACE_WITH_WEB3FORMS_KEY";
-const CONTACT_EMAIL = "REPLACE_WITH_CONTACT_EMAIL";
+const FORM_ACCESS_KEY = "a10b3b6a-a478-4b2e-b906-b069cf53f562";
+const CONTACT_EMAIL = "jackson@timetogetherprod.com";
 
 const APPLY_BUTTON_LABEL = "Ticketing & Details";
 const APPLY_CLOSED_LABEL = "Applications closed";

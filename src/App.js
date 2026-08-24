@@ -110,16 +110,31 @@ const globalCSS = `
     gap: 12px; min-width: 0;
   }
   .evt-venue { text-align: right; line-height: 1; }
-  /* Poster sits in the right-hand column above the venue/time line. The column
-     is as wide as that line, so centering the poster in it keeps the flyer
-     visually centred over the text rather than jammed against the card edge. */
+  /* On a poster event the flyer is the whole card, so it runs as wide as the
+     card allows and the rest of the layout gets out of its way. */
   .evt-poster {
-    display: block; align-self: center;
-    width: clamp(120px, 28vw, 220px); height: auto;
+    display: block;
+    width: 100%; max-width: 440px; height: auto;
     border-radius: 2px;
     box-shadow:
-      0 10px 26px rgba(0,0,0,0.55),
+      0 14px 34px rgba(0,0,0,0.55),
       0 0 0 1px rgba(139,26,26,0.22);
+  }
+  /* Placeholder destination for now — see PosterEventCard. Sized past 44px so
+     it stays a comfortable touch target on a phone. */
+  .evt-details {
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-top: clamp(16px, 3vw, 22px);
+    font-family: 'Lato', sans-serif; font-size: 12px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    color: ${AMBER_LIGHT}; text-decoration: none;
+    background: transparent; border: 1px solid ${AMBER};
+    border-radius: 1px; padding: 0 clamp(18px, 5vw, 28px);
+    min-height: 44px; min-width: 44px; box-sizing: border-box;
+    cursor: pointer; transition: all 0.3s ease;
+  }
+  .evt-details:hover, .evt-details:focus-visible {
+    background: ${AMBER}; border-color: ${AMBER}; color: ${BG_DARK};
   }
   /* Lives here, not in the inline style, so useSingleLineTitle can clear its
      override and fall back to this target size. */
@@ -399,20 +414,55 @@ function useSingleLineTitle(text) {
 }
 
 // Shared by the home page teaser and the events page so both render identically.
+// An event with a poster shows the poster and nothing else; one without falls
+// back to the typeset layout, which is what the archive still uses.
 function EventCard({ evt, index = 0, onClick }) {
-  const titleRef = useSingleLineTitle(evt.title);
+  return evt.poster
+    ? <PosterEventCard evt={evt} index={index} onClick={onClick} />
+    : <TypesetEventCard evt={evt} index={index} onClick={onClick} />;
+}
+
+// The card shell — translucent pane, gradient edge, breathing glow. Both card
+// variants sit inside one so they settle into the page the same way.
+function CardShell({ index, onClick, children, align }) {
   return (
     <div
       className="evt-card"
       onClick={onClick}
       style={{
         display: "flex", flexDirection: "column", position: "relative",
-        width: "100%", maxWidth: "800px", boxSizing: "border-box",
+        alignItems: align, width: "100%", maxWidth: "800px", boxSizing: "border-box",
         padding: "clamp(20px, 5vw, 28px) clamp(16px, 4.5vw, 24px)",
         cursor: onClick ? "pointer" : "default",
         animation: `fadeInUp 0.6s ease ${index * 0.1}s both, frameGlow 5s ease-in-out ${index * 0.1 + 0.6}s infinite`,
       }}
     >
+      {children}
+    </div>
+  );
+}
+
+function PosterEventCard({ evt, index, onClick }) {
+  // The box has nowhere to go yet — giving the event a `detailsLink` turns it
+  // into a real link without touching this component. stopPropagation keeps a
+  // click on the box from also firing the card's own navigation on the home page.
+  const stop = (e) => e.stopPropagation();
+  return (
+    <CardShell index={index} onClick={onClick} align="center">
+      <img src={evt.poster} alt={evt.posterAlt || `${evt.title} poster`} className="evt-poster" />
+      {evt.detailsLink ? (
+        <a href={evt.detailsLink} className="evt-details" onClick={stop}>Ticketing &amp; Details</a>
+      ) : (
+        <button type="button" className="evt-details" onClick={stop}>Ticketing &amp; Details</button>
+      )}
+    </CardShell>
+  );
+}
+
+function TypesetEventCard({ evt, index = 0, onClick }) {
+  const titleRef = useSingleLineTitle(evt.title);
+  return (
+    <CardShell index={index} onClick={onClick}>
       <h3 ref={titleRef} className="evt-title" style={{
         fontFamily: "'Lato', sans-serif", fontWeight: 700,
         letterSpacing: "1px", color: "#FFFFFF", marginTop: "0",
@@ -458,9 +508,6 @@ function EventCard({ evt, index = 0, onClick }) {
           }}>{evt.date.split(" ")[0]} · {evt.day}</div>
         </div>
         <div className="evt-meta-side">
-          {evt.poster && (
-            <img src={evt.poster} alt={evt.posterAlt || `${evt.title} poster`} className="evt-poster" />
-          )}
           {evt.ticketLink && (
             <a href={evt.ticketLink} className="evt-tickets" style={{
               fontFamily: "'Lato', sans-serif", fontSize: "12px",
@@ -484,7 +531,7 @@ function EventCard({ evt, index = 0, onClick }) {
           }}>{evt.venue} &nbsp;·&nbsp; {evt.time}</div>
         </div>
       </div>
-    </div>
+    </CardShell>
   );
 }
 

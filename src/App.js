@@ -25,12 +25,12 @@ const ordinal = (n) => {
 };
 
 // ─── PLACEHOLDER DATA ───
-const UPCOMING_EVENTS = [
-  { date: "AUG 22", displayDate: "August 22nd", day: "SAT", title: "Byron The Aquarius", venue: "Firn", artists: ["Mike Devlin", "Jackson Cole", "Vaughn", "Coe"], time: "4PM - 11PM", ticketLink: null },
-];
+const UPCOMING_EVENTS = [];
 
 // Past events, newest first. Same shape as UPCOMING_EVENTS.
-const PAST_EVENTS = [];
+const PAST_EVENTS = [
+  { date: "AUG 22", displayDate: "August 22nd", day: "SAT", title: "Byron The Aquarius", venue: "Firn", artists: ["Mike Devlin", "Jackson Cole", "Vaughn", "Coe"], time: "4PM - 11PM", ticketLink: null },
+];
 
 // ─── STYLES ───
 const globalCSS = `
@@ -492,14 +492,16 @@ function HomePage({ setPage }) {
         </div>
       </div>
 
-      {/* Next Event Teaser */}
-      <div style={{
-        padding: "80px clamp(12px, 4vw, 32px)", display: "flex", justifyContent: "center",
-      }}>
-        <div style={{ maxWidth: "800px", width: "100%", minWidth: 0 }}>
-          <EventCard evt={UPCOMING_EVENTS[0]} onClick={() => setPage("events")} />
+      {/* Next Event Teaser — hidden while there is nothing upcoming. */}
+      {UPCOMING_EVENTS.length > 0 && (
+        <div style={{
+          padding: "80px clamp(12px, 4vw, 32px)", display: "flex", justifyContent: "center",
+        }}>
+          <div style={{ maxWidth: "800px", width: "100%", minWidth: 0 }}>
+            <EventCard evt={UPCOMING_EVENTS[0]} onClick={() => setPage("events")} />
+          </div>
         </div>
-      </div>
+      )}
 
       {/* About Section */}
       <div style={{
@@ -544,11 +546,18 @@ function EventsPage() {
           letterSpacing: "6px", color: TEXT_PRIMARY, marginTop: "8px", marginBottom: "48px",
         }}>Upcoming Events</h1>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
-          {UPCOMING_EVENTS.map((evt, i) => (
-            <EventCard key={i} evt={evt} index={i} />
-          ))}
-        </div>
+        {UPCOMING_EVENTS.length > 0 ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+            {UPCOMING_EVENTS.map((evt, i) => (
+              <EventCard key={i} evt={evt} index={i} />
+            ))}
+          </div>
+        ) : (
+          <p style={{
+            fontFamily: "'Lato', sans-serif", fontSize: "14px",
+            letterSpacing: "2px", color: TEXT_MUTED, textTransform: "uppercase",
+          }}>Nothing announced yet</p>
+        )}
       </div>
     </div>
   );

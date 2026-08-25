@@ -44,6 +44,7 @@ const EVENTS = [
       "Sherman on support.",
       "This is an application, not a ticket sale. Approved applicants will receive an email with ticketing information.",
       "Tickets limited to 2 per approved applicant.",
+      "Ticketing will operate on a tiered system - pricing may vary based on application date.",
       "Venue location will be released day of event.",
     ],
     extraRules: [],

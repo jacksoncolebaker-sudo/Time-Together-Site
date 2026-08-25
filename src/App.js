@@ -295,10 +295,11 @@ function Nav({ currentPage, setPage }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Archive is hidden from the nav for now. The /archive route still resolves,
+  // so re-adding the entry below is all it takes to bring the tab back.
   const navItems = [
     { id: "home", label: "Home" },
     { id: "events", label: "Events" },
-    { id: "archive", label: "Archive" },
   ];
 
   return (
@@ -821,7 +822,7 @@ const applyInputStyle = {
 };
 const applyOptionalStyle = {
   fontFamily: "'Lato', sans-serif", fontSize: "11px", fontWeight: 400,
-  letterSpacing: "1px", color: TEXT_MUTED, textTransform: "none",
+  letterSpacing: "1px", color: AMBER_LIGHT, textTransform: "none",
   marginLeft: "8px",
 };
 const applyErrorStyle = {

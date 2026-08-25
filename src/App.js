@@ -40,7 +40,7 @@ const EVENTS = [
     venue: "Undisclosed Location",
     applicationsOpen: true,
     applyIntro: [
-      "House legend Halo Varga plays an extended set for the meeting between Time Together and Divine Timing.",
+      "House legend Halo Varga plays an extended set for the first meeting between Time Together and Divine Timing.",
       "Sherman on support.",
       "This is an application, not a ticket sale. Approved applicants will receive an email with ticketing information.",
       "Venue location will be released day of event.",

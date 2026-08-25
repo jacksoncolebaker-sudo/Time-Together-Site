@@ -56,23 +56,6 @@ const EVENTS = [
     poster: haloVargaPoster,
     posterAlt: "Halo Varga with Sherman — September 18th, 2026, undisclosed location",
   },
-  {
-    id: "byron-the-aquarius",
-    title: "Byron The Aquarius",
-    date: "August 22nd, 2026",
-    dateISO: "2026-08-22",
-    venue: "Firn",
-    applicationsOpen: false,
-    applyIntro: [],
-    extraRules: [],
-    paymentLink: "",
-    past: true,
-    cardDate: "AUG 22",
-    day: "SAT",
-    artists: ["Mike Devlin", "Jackson Cole", "Vaughn", "Coe"],
-    time: "4PM - 11PM",
-    ticketLink: null,
-  },
 ];
 
 // ============================================

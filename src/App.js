@@ -46,6 +46,7 @@ const EVENTS = [
       "Tickets limited to 3 per approved applicant.",
       "Ticketing will operate on a tiered system - pricing may vary based on application date.",
       "Venue location will be released day of event.",
+      { lead: "Important:", text: "Approval emails may land in the spam folder." },
     ],
     extraRules: [],
     paymentLink: "",
@@ -1004,8 +1005,16 @@ function ApplyPage() {
             ) : (
               <>
                 {/* Event-specific details */}
+                {/* An entry is either a plain string or {lead, text}, where the
+                    lead runs in the accent red ahead of the sentence. */}
                 {resolvedEvent.applyIntro.map((line, i) => (
-                  <p key={i} style={applyBodyStyle}>{line}</p>
+                  <p key={i} style={applyBodyStyle}>
+                    {typeof line === "string" ? line : (
+                      <>
+                        <span style={{ color: AMBER_LIGHT }}>{line.lead}</span> {line.text}
+                      </>
+                    )}
+                  </p>
                 ))}
 
                 {/* Fields */}

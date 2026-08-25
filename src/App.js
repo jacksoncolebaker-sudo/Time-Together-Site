@@ -46,9 +46,7 @@ const EVENTS = [
       "Tickets limited to 2 per approved applicant.",
       "Venue location will be released day of event.",
     ],
-    extraRules: [
-      "No re-entry once you have left the building.",
-    ],
+    extraRules: [],
     paymentLink: "",
     past: false,
     cardDate: "SEP 18",
@@ -73,10 +71,11 @@ const APPLY_CLOSED_LABEL = "Applications closed";
 
 // Rules shown for EVERY event, before the event's extraRules
 const HOUSE_RULES = [
-  "21+ with valid ID. No exceptions.",
-  "No photos or video on the dancefloor.",
+  "21+ with valid ID.",
+  "Keep phone use to a minimum while on the dancefloor.",
   "Applications are read individually. Approval is not guaranteed.",
-  "Treat the space, the staff, and each other with respect.",
+  "Treat everyone with respect.",
+  "Re-entry is allowed. Please be quiet if stepping outside.",
 ];
 
 // ─── STYLES ───

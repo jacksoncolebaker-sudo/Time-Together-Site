@@ -40,8 +40,10 @@ const EVENTS = [
     venue: "Undisclosed Location",
     applicationsOpen: true,
     applyIntro: [
-      "Halo Varga plays an extended set, with Sherman opening. Doors at 10:00, close at 05:00.",
-      "This is an application, not a ticket sale. Everyone who applies hears back by email, and approved applicants receive the address and payment details a few days before the event.",
+      "House legend Halo Varga plays an extended set for the meeting between Time Together and Divine Timing.",
+      "Sherman on support.",
+      "This is an application, not a ticket sale. Approved applicants will receive an email with ticketing information.",
+      "Venue location will be released day of event.",
     ],
     extraRules: [
       "No re-entry once you have left the building.",

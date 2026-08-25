@@ -66,6 +66,8 @@ const EVENTS = [
 // ============================================
 const FORM_ENDPOINT = "https://api.web3forms.com/submit";
 const FORM_ACCESS_KEY = "a10b3b6a-a478-4b2e-b906-b069cf53f562";
+const SHEET_ENDPOINT = "https://script.google.com/macros/s/AKfycbyNH0bV6-eVuu4-NpIlHfhqmYSAQTaSdqsRrh6M1emoHTRm1QK0J5LgDWSChxKr3UHy/exec";
+const SHEET_SECRET = "DIVINE_TIME_TOGETHER";
 const CONTACT_EMAIL = "ticketing@timetogetherprod.com";
 
 const APPLY_BUTTON_LABEL = "Ticketing & Details";
@@ -929,6 +931,28 @@ function ApplyPage() {
         }),
       });
       if (!res.ok) throw new Error("Submission rejected");
+      // Mirror into the sheet. Deliberately not awaited: the email above is the
+      // primary channel, so a slow or failed copy must never hold up the
+      // success message or surface to the applicant. no-cors keeps Apps Script
+      // from being asked for a preflight it will not answer — which also means
+      // the response is opaque and cannot be checked.
+      fetch(SHEET_ENDPOINT, {
+        method: "POST",
+        mode: "no-cors",
+        body: JSON.stringify({
+          secret: SHEET_SECRET,
+          event_id: resolvedEvent.id,
+          event_title: resolvedEvent.title,
+          full_name: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          instagram: formData.instagram,
+          past_events: formData.pastEvents,
+          references: formData.references,
+          email_opt_in: Boolean(formData.emailOptIn),
+          sms_opt_in: Boolean(formData.smsOptIn),
+        }),
+      }).catch(() => {});
       setSubmitted(true);
     } catch (err) {
       // Nothing is cleared here — the user's answers stay in formData.

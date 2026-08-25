@@ -43,6 +43,7 @@ const EVENTS = [
       "House legend Halo Varga plays an extended set for the first meeting between Time Together and Divine Timing.",
       "Sherman on support.",
       "This is an application, not a ticket sale. Approved applicants will receive an email with ticketing information.",
+      "Tickets limited to 4 per approved applicant.",
       "Venue location will be released day of event.",
     ],
     extraRules: [

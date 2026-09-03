@@ -40,7 +40,7 @@ const EVENTS = [
     venue: "Undisclosed Location",
     applicationsOpen: true,
     applyIntro: [
-      "House legend Halo Varga plays an extended set for the first meeting between Time Together and Divine Timing.",
+      { title: "A Divine Time Together Vol I", text: "House legend Halo Varga plays an extended set for the first meeting between Time Together and Divine Timing." },
       "Sherman on support.",
       "This is an application, not a ticket sale. Approved applicants will receive an email with ticketing information.",
       "Tickets limited to 3 per approved applicant.",
@@ -846,6 +846,14 @@ const applyCheckboxLabelStyle = {
   fontFamily: "'Lato', sans-serif", fontSize: "15px", lineHeight: 1.6,
   color: TEXT_DIM, cursor: "pointer",
 };
+// Bold white over the poster's red bloom — same rgba(139,26,26) family as
+// posterGlow, scaled down for text. Left static rather than breathing: an
+// animated glow on a word inside a paragraph pulls the eye off the copy.
+const applyTitleRunStyle = {
+  fontWeight: 700, color: "#FFFFFF",
+  textShadow:
+    "0 0 12px rgba(139,26,26,0.55), 0 0 26px rgba(139,26,26,0.35), 0 0 50px rgba(139,26,26,0.18)",
+};
 
 function ApplyPage() {
   const params = new URLSearchParams(window.location.search);
@@ -1029,13 +1037,17 @@ function ApplyPage() {
             ) : (
               <>
                 {/* Event-specific details */}
-                {/* An entry is either a plain string or {lead, text, trail},
-                    where lead and trail are optional accent-red runs that sit
-                    before and after the sentence on the same line. */}
+                {/* An entry is either a plain string or {title, lead, text,
+                    trail}: title is a glowing white run-in, lead and trail are
+                    optional accent-red runs. All three sit on the sentence's
+                    own line. */}
                 {resolvedEvent.applyIntro.map((line, i) => (
                   <p key={i} style={applyBodyStyle}>
                     {typeof line === "string" ? line : (
                       <>
+                        {line.title && (
+                          <><span style={applyTitleRunStyle}>{line.title}</span>{" "}</>
+                        )}
                         {line.lead && (
                           <><span style={{ color: AMBER_LIGHT }}>{line.lead}</span>{" "}</>
                         )}

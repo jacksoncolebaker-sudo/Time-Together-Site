@@ -184,6 +184,28 @@ const globalCSS = `
         0 14px 34px rgba(0,0,0,0.55);
     }
   }
+  /* The volume title above an application paragraph. Same red as posterGlow,
+     breathing on the same 5s cycle but at a shallower depth — it sits inches
+     from body copy, where the poster's full bloom would be a distraction. */
+  .apply-intro-title {
+    font-family: 'Lato', sans-serif;
+    font-size: 18px; font-weight: 700; letter-spacing: 2px;
+    color: #FFFFFF; margin-bottom: 10px;
+    animation: applyTitleGlow 5s ease-in-out infinite;
+  }
+  @keyframes applyTitleGlow {
+    0%, 100% {
+      text-shadow:
+        0 0 10px rgba(139,26,26,0.40),
+        0 0 22px rgba(139,26,26,0.22);
+    }
+    50% {
+      text-shadow:
+        0 0 16px rgba(139,26,26,0.70),
+        0 0 34px rgba(139,26,26,0.40),
+        0 0 60px rgba(139,26,26,0.20);
+    }
+  }
   /* Placeholder destination for now — see PosterEventCard. Sized past 44px so
      it stays a comfortable touch target on a phone. */
   .evt-details {
@@ -846,14 +868,6 @@ const applyCheckboxLabelStyle = {
   fontFamily: "'Lato', sans-serif", fontSize: "15px", lineHeight: 1.6,
   color: TEXT_DIM, cursor: "pointer",
 };
-// Bold white over the poster's red bloom — same rgba(139,26,26) family as
-// posterGlow, scaled down for text. Left static rather than breathing: an
-// animated glow on a word inside a paragraph pulls the eye off the copy.
-const applyTitleRunStyle = {
-  fontWeight: 700, color: "#FFFFFF",
-  textShadow:
-    "0 0 12px rgba(139,26,26,0.55), 0 0 26px rgba(139,26,26,0.35), 0 0 50px rgba(139,26,26,0.18)",
-};
 
 function ApplyPage() {
   const params = new URLSearchParams(window.location.search);
@@ -1038,27 +1052,28 @@ function ApplyPage() {
               <>
                 {/* Event-specific details */}
                 {/* An entry is either a plain string or {title, lead, text,
-                    trail}: title is a glowing white run-in, lead and trail are
-                    optional accent-red runs. All three sit on the sentence's
-                    own line. */}
-                {resolvedEvent.applyIntro.map((line, i) => (
-                  <p key={i} style={applyBodyStyle}>
-                    {typeof line === "string" ? line : (
-                      <>
-                        {line.title && (
-                          <><span style={applyTitleRunStyle}>{line.title}</span>{" "}</>
+                    trail}. `title` gets its own glowing line above the
+                    paragraph; `lead` and `trail` are accent-red runs sitting
+                    inline before and after the sentence. */}
+                {resolvedEvent.applyIntro.map((line, i) => {
+                  const para = typeof line === "string" ? { text: line } : line;
+                  return (
+                    <div key={i}>
+                      {para.title && (
+                        <div className="apply-intro-title">{para.title}</div>
+                      )}
+                      <p style={applyBodyStyle}>
+                        {para.lead && (
+                          <><span style={{ color: AMBER_LIGHT }}>{para.lead}</span>{" "}</>
                         )}
-                        {line.lead && (
-                          <><span style={{ color: AMBER_LIGHT }}>{line.lead}</span>{" "}</>
+                        {para.text}
+                        {para.trail && (
+                          <>{" "}<span style={{ color: AMBER_LIGHT }}>{para.trail}</span></>
                         )}
-                        {line.text}
-                        {line.trail && (
-                          <>{" "}<span style={{ color: AMBER_LIGHT }}>{line.trail}</span></>
-                        )}
-                      </>
-                    )}
-                  </p>
-                ))}
+                      </p>
+                    </div>
+                  );
+                })}
 
                 {/* Fields */}
                 <div style={{ marginTop: "40px" }}>

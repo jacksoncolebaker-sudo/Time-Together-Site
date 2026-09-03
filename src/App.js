@@ -44,7 +44,7 @@ const EVENTS = [
       "Sherman on support.",
       "This is an application, not a ticket sale. Approved applicants will receive an email with ticketing information.",
       "Tickets limited to 3 per approved applicant.",
-      "Ticketing will operate on a tiered system - pricing may vary based on application date.",
+      { text: "Ticketing will operate on a tiered system - pricing may vary based on application date.", trail: "Early bird ticket sales ending soon" },
       "Venue location will be released day of event.",
       { lead: "Important:", text: "Approval emails may land in the spam folder." },
     ],
@@ -1029,13 +1029,20 @@ function ApplyPage() {
             ) : (
               <>
                 {/* Event-specific details */}
-                {/* An entry is either a plain string or {lead, text}, where the
-                    lead runs in the accent red ahead of the sentence. */}
+                {/* An entry is either a plain string or {lead, text, trail},
+                    where lead and trail are optional accent-red runs that sit
+                    before and after the sentence on the same line. */}
                 {resolvedEvent.applyIntro.map((line, i) => (
                   <p key={i} style={applyBodyStyle}>
                     {typeof line === "string" ? line : (
                       <>
-                        <span style={{ color: AMBER_LIGHT }}>{line.lead}</span> {line.text}
+                        {line.lead && (
+                          <><span style={{ color: AMBER_LIGHT }}>{line.lead}</span>{" "}</>
+                        )}
+                        {line.text}
+                        {line.trail && (
+                          <>{" "}<span style={{ color: AMBER_LIGHT }}>{line.trail}</span></>
+                        )}
                       </>
                     )}
                   </p>

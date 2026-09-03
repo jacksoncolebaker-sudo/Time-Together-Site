@@ -184,6 +184,19 @@ const globalCSS = `
         0 14px 34px rgba(0,0,0,0.55);
     }
   }
+  /* A quiet frame around the event details, using the site's existing faint
+     oxblood border over a barely-lifted panel. It groups the copy without
+     competing with the title's glow or the form beneath it. */
+  .apply-intro-box {
+    border: 1px solid ${BORDER};
+    border-radius: 2px;
+    background: rgba(255,255,255,0.018);
+    padding: clamp(20px, 4vw, 28px);
+  }
+  /* applyBodyStyle gives every paragraph a bottom margin; drop it on the last
+     one so the box's padding stays even top and bottom. */
+  .apply-intro-box > div:last-child > p { margin-bottom: 0; }
+
   /* The volume title above an application paragraph. Same red as posterGlow,
      breathing on the same 5s cycle but at a shallower depth — it sits inches
      from body copy, where the poster's full bloom would be a distraction. */
@@ -1055,25 +1068,27 @@ function ApplyPage() {
                     trail}. `title` gets its own glowing line above the
                     paragraph; `lead` and `trail` are accent-red runs sitting
                     inline before and after the sentence. */}
-                {resolvedEvent.applyIntro.map((line, i) => {
-                  const para = typeof line === "string" ? { text: line } : line;
-                  return (
-                    <div key={i}>
-                      {para.title && (
-                        <div className="apply-intro-title">{para.title}</div>
-                      )}
-                      <p style={applyBodyStyle}>
-                        {para.lead && (
-                          <><span style={{ color: AMBER_LIGHT }}>{para.lead}</span>{" "}</>
+                <div className="apply-intro-box">
+                  {resolvedEvent.applyIntro.map((line, i) => {
+                    const para = typeof line === "string" ? { text: line } : line;
+                    return (
+                      <div key={i}>
+                        {para.title && (
+                          <div className="apply-intro-title">{para.title}</div>
                         )}
-                        {para.text}
-                        {para.trail && (
-                          <>{" "}<span style={{ color: AMBER_LIGHT }}>{para.trail}</span></>
-                        )}
-                      </p>
-                    </div>
-                  );
-                })}
+                        <p style={applyBodyStyle}>
+                          {para.lead && (
+                            <><span style={{ color: AMBER_LIGHT }}>{para.lead}</span>{" "}</>
+                          )}
+                          {para.text}
+                          {para.trail && (
+                            <>{" "}<span style={{ color: AMBER_LIGHT }}>{para.trail}</span></>
+                          )}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
 
                 {/* Fields */}
                 <div style={{ marginTop: "40px" }}>

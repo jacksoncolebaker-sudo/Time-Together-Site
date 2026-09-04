@@ -40,13 +40,25 @@ const EVENTS = [
     venue: "Undisclosed Location",
     applicationsOpen: true,
     applyIntro: [
-      { title: "A Divine Time Together Vol I", text: "House legend Halo Varga plays an extended set for the first meeting between Time Together and Divine Timing." },
-      "Sherman on support.",
-      "This is an application, not a ticket sale. Approved applicants will receive an email with ticketing information.",
-      "Tickets limited to 3 per approved applicant.",
-      { text: "Ticketing will operate on a tiered system - pricing may vary based on application date.", trail: "Early bird ticket sales ending soon" },
-      "Venue location will be released day of event.",
-      { lead: "Important:", text: "Approval emails may land in the spam folder." },
+      {
+        title: "A Divine Time Together, Vol. I",
+        text: "House legend Halo Varga plays an extended set — the first meeting of Time Together and Divine Timing. Sherman on support.",
+      },
+      {
+        heading: "How this works",
+        items: [
+          "This is an application, not a ticket sale — approved applicants receive the ticket link by email.",
+          { text: "Tiered pricing:", trail: "Early Bird ticket sales end soon." },
+          "Location goes to ticket holders 24 hours before doors.",
+        ],
+      },
+      // The address is spelled out rather than read from CONTACT_EMAIL: that
+      // constant is declared below EVENTS, so referencing it here would hit the
+      // temporal dead zone at module load.
+      {
+        lead: "Important:",
+        text: "Approval emails may land in spam. Add ticketing@timetogetherprod.com to your contacts to avoid this.",
+      },
     ],
     extraRules: [],
     paymentLink: "",
@@ -184,6 +196,26 @@ const globalCSS = `
         0 14px 34px rgba(0,0,0,0.55);
     }
   }
+  /* Section label inside the description — the site's small-caps treatment,
+     kept at full text colour because this is primary copy, unlike the quieter
+     house-rules heading below the form. */
+  .apply-intro-heading {
+    font-family: 'Lato', sans-serif;
+    font-size: 12px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; color: ${TEXT_PRIMARY};
+    margin-top: 28px; margin-bottom: 14px;
+  }
+  /* Body-sized, unlike the house-rules list: these are terms the applicant
+     needs to read, not fine print. */
+  .apply-intro-list {
+    padding-left: 20px; margin-bottom: 16px;
+  }
+  .apply-intro-list li {
+    font-family: 'Lato', sans-serif; font-size: 16px; line-height: 1.8;
+    color: ${TEXT_PRIMARY}; margin-bottom: 10px;
+  }
+  .apply-intro-list li::marker { color: ${AMBER}; }
+
   /* The volume title above an application paragraph. Same red as posterGlow,
      breathing on the same 5s cycle but at a shallower depth — it sits inches
      from body copy, where the poster's full bloom would be a distraction. */
@@ -869,6 +901,20 @@ const applyCheckboxLabelStyle = {
   color: TEXT_DIM, cursor: "pointer",
 };
 
+// One run of intro copy, used by both paragraphs and list items: an optional
+// accent-red `lead`, the sentence, then an optional accent-red `trail`. A bare
+// string is just the sentence.
+function IntroRun({ line }) {
+  const p = typeof line === "string" ? { text: line } : line;
+  return (
+    <>
+      {p.lead && <><span style={{ color: AMBER_LIGHT }}>{p.lead}</span>{" "}</>}
+      {p.text}
+      {p.trail && <>{" "}<span style={{ color: AMBER_LIGHT }}>{p.trail}</span></>}
+    </>
+  );
+}
+
 function ApplyPage() {
   const params = new URLSearchParams(window.location.search);
   const requestedId = params.get("event");
@@ -1050,27 +1096,30 @@ function ApplyPage() {
               </div>
             ) : (
               <>
-                {/* Event-specific details */}
-                {/* An entry is either a plain string or {title, lead, text,
-                    trail}. `title` gets its own glowing line above the
-                    paragraph; `lead` and `trail` are accent-red runs sitting
-                    inline before and after the sentence. */}
-                {resolvedEvent.applyIntro.map((line, i) => {
-                  const para = typeof line === "string" ? { text: line } : line;
+                {/* Event-specific details. A block is a plain string or
+                    {title, heading, text, lead, trail, items}: `title` is the
+                    glowing volume line, `heading` a small section label, and
+                    `items` a bulleted list. See IntroRun for lead/trail. */}
+                {resolvedEvent.applyIntro.map((block, i) => {
+                  const b = typeof block === "string" ? { text: block } : block;
                   return (
                     <div key={i}>
-                      {para.title && (
-                        <div className="apply-intro-title">{para.title}</div>
+                      {b.title && (
+                        <div className="apply-intro-title">{b.title}</div>
                       )}
-                      <p style={applyBodyStyle}>
-                        {para.lead && (
-                          <><span style={{ color: AMBER_LIGHT }}>{para.lead}</span>{" "}</>
-                        )}
-                        {para.text}
-                        {para.trail && (
-                          <>{" "}<span style={{ color: AMBER_LIGHT }}>{para.trail}</span></>
-                        )}
-                      </p>
+                      {b.heading && (
+                        <h2 className="apply-intro-heading">{b.heading}</h2>
+                      )}
+                      {b.text && (
+                        <p style={applyBodyStyle}><IntroRun line={b} /></p>
+                      )}
+                      {b.items && (
+                        <ul className="apply-intro-list">
+                          {b.items.map((item, j) => (
+                            <li key={j}><IntroRun line={item} /></li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   );
                 })}

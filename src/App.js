@@ -3,6 +3,9 @@ import haloVargaPoster from "./halo-varga-poster.jpg";
 
 const AMBER = "#8B1A1A";
 const AMBER_LIGHT = "#A62626";
+// A step up from AMBER_LIGHT for short accent runs set against body copy,
+// where the darker oxblood reads as muddy rather than as emphasis.
+const AMBER_BRIGHT = "#C83636";
 const AMBER_GLOW = "rgba(139, 26, 26, 0.2)";
 const AMBER_GLOW_STRONG = "rgba(139, 26, 26, 0.4)";
 const BG_DARK = "#080808";
@@ -934,7 +937,7 @@ function linkifyEmails(text) {
 // One run of intro copy, used by both paragraphs and list items: an optional
 // accent-red `lead`, the sentence, then an optional accent-red `trail`. A bare
 // string is just the sentence.
-const introAccentStyle = { color: AMBER_LIGHT, fontWeight: 700 };
+const introAccentStyle = { color: AMBER_BRIGHT, fontWeight: 700 };
 
 function IntroRun({ line }) {
   const p = typeof line === "string" ? { text: line } : line;

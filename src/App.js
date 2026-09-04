@@ -196,18 +196,19 @@ const globalCSS = `
         0 14px 34px rgba(0,0,0,0.55);
     }
   }
-  /* Mail links in the description: accent red with a quiet underline, so the
-     address reads as tappable without competing with the red lead beside it. */
+  /* Mail links in the description: bold white over an accent-red underline,
+     which keeps the address reading as a link now that its colour matches the
+     copy around it. Hover flips it red so the state change is unmistakable. */
   .apply-mail {
-    color: ${AMBER_LIGHT};
+    color: #FFFFFF; font-weight: 700;
     text-decoration: underline;
     text-underline-offset: 3px;
-    text-decoration-color: rgba(139,26,26,0.55);
+    text-decoration-color: rgba(139,26,26,0.75);
     overflow-wrap: anywhere;
     transition: color 0.3s ease, text-decoration-color 0.3s ease;
   }
   .apply-mail:hover, .apply-mail:focus-visible {
-    color: #FFFFFF; text-decoration-color: #FFFFFF;
+    color: ${AMBER_LIGHT}; text-decoration-color: ${AMBER_LIGHT};
   }
 
   /* Section label inside the description — the site's small-caps treatment,
@@ -933,13 +934,15 @@ function linkifyEmails(text) {
 // One run of intro copy, used by both paragraphs and list items: an optional
 // accent-red `lead`, the sentence, then an optional accent-red `trail`. A bare
 // string is just the sentence.
+const introAccentStyle = { color: AMBER_LIGHT, fontWeight: 700 };
+
 function IntroRun({ line }) {
   const p = typeof line === "string" ? { text: line } : line;
   return (
     <>
-      {p.lead && <><span style={{ color: AMBER_LIGHT }}>{p.lead}</span>{" "}</>}
+      {p.lead && <><span style={introAccentStyle}>{p.lead}</span>{" "}</>}
       {linkifyEmails(p.text)}
-      {p.trail && <>{" "}<span style={{ color: AMBER_LIGHT }}>{p.trail}</span></>}
+      {p.trail && <>{" "}<span style={introAccentStyle}>{p.trail}</span></>}
     </>
   );
 }

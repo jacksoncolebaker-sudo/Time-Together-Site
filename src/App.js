@@ -196,14 +196,14 @@ const globalCSS = `
         0 14px 34px rgba(0,0,0,0.55);
     }
   }
-  /* Mail links in the description: bold white over an accent-red underline,
-     which keeps the address reading as a link now that its colour matches the
-     copy around it. Hover flips it red so the state change is unmistakable. */
+  /* Mail links in the description: bold white, underline included. The
+     underline is what marks it as a link, since colour and weight now match
+     the copy around it. Hover flips it red so the state change is clear. */
   .apply-mail {
     color: #FFFFFF; font-weight: 700;
     text-decoration: underline;
     text-underline-offset: 3px;
-    text-decoration-color: rgba(139,26,26,0.75);
+    text-decoration-color: #FFFFFF;
     overflow-wrap: anywhere;
     transition: color 0.3s ease, text-decoration-color 0.3s ease;
   }

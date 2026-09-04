@@ -196,6 +196,20 @@ const globalCSS = `
         0 14px 34px rgba(0,0,0,0.55);
     }
   }
+  /* Mail links in the description: accent red with a quiet underline, so the
+     address reads as tappable without competing with the red lead beside it. */
+  .apply-mail {
+    color: ${AMBER_LIGHT};
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(139,26,26,0.55);
+    overflow-wrap: anywhere;
+    transition: color 0.3s ease, text-decoration-color 0.3s ease;
+  }
+  .apply-mail:hover, .apply-mail:focus-visible {
+    color: #FFFFFF; text-decoration-color: #FFFFFF;
+  }
+
   /* Section label inside the description — the site's small-caps treatment,
      kept at full text colour because this is primary copy, unlike the quieter
      house-rules heading below the form. */
@@ -901,6 +915,21 @@ const applyCheckboxLabelStyle = {
   color: TEXT_DIM, cursor: "pointer",
 };
 
+// Splits on an address while keeping it in the result, so any email written in
+// intro copy becomes a mailto link without needing its own data key. Trailing
+// punctuation stays outside the match: "…@bar.com." links only "…@bar.com".
+const EMAIL_PART = /([^\s@]+@[^\s@]+\.[a-z]{2,})/i;
+const isEmail = (s) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(s);
+
+function linkifyEmails(text) {
+  if (typeof text !== "string") return text;
+  return text.split(EMAIL_PART).map((part, i) =>
+    isEmail(part)
+      ? <a key={i} href={`mailto:${part}`} className="apply-mail">{part}</a>
+      : part
+  );
+}
+
 // One run of intro copy, used by both paragraphs and list items: an optional
 // accent-red `lead`, the sentence, then an optional accent-red `trail`. A bare
 // string is just the sentence.
@@ -909,7 +938,7 @@ function IntroRun({ line }) {
   return (
     <>
       {p.lead && <><span style={{ color: AMBER_LIGHT }}>{p.lead}</span>{" "}</>}
-      {p.text}
+      {linkifyEmails(p.text)}
       {p.trail && <>{" "}<span style={{ color: AMBER_LIGHT }}>{p.trail}</span></>}
     </>
   );

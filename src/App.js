@@ -963,7 +963,7 @@ function ApplyPage() {
 
   const [formData, setFormData] = useState({
     fullName: "", email: "", phone: "", instagram: "",
-    pastEvents: "", references: "",
+    pastEvents: "",
     emailOptIn: false, smsOptIn: false, company: "",
   });
   const [errors, setErrors] = useState({});
@@ -993,7 +993,6 @@ function ApplyPage() {
       next.email = "Enter a valid email address.";
     }
     if (!formData.instagram.trim()) next.instagram = REQUIRED_MSG;
-    if (!formData.pastEvents.trim()) next.pastEvents = REQUIRED_MSG;
     if (formData.smsOptIn && !formData.phone.trim()) {
       next.smsOptIn = "Add a phone number to receive texts, or uncheck this box.";
     }
@@ -1027,7 +1026,10 @@ function ApplyPage() {
           phone: formData.phone,
           instagram: formData.instagram,
           past_events: formData.pastEvents,
-          references: formData.references,
+          // Retired field. The key stays so the sheet's column mapping and the
+          // email template keep their shape; drop it once the Apps Script is
+          // updated to no longer read it.
+          references: "",
           email_opt_in: formData.emailOptIn,
           sms_opt_in: formData.smsOptIn,
         }),
@@ -1050,7 +1052,7 @@ function ApplyPage() {
           phone: formData.phone,
           instagram: formData.instagram,
           past_events: formData.pastEvents,
-          references: formData.references,
+          references: "", // retired field — see the Web3Forms body above
           email_opt_in: Boolean(formData.emailOptIn),
           sms_opt_in: Boolean(formData.smsOptIn),
         }),
@@ -1205,6 +1207,7 @@ function ApplyPage() {
                   <div style={applyFieldStyle}>
                     <label htmlFor="pastEvents" style={applyLabelStyle}>
                       What sort of events have you attended in the past?
+                      <span style={applyOptionalStyle}>optional</span>
                     </label>
                     <textarea
                       id="pastEvents" name="pastEvents" rows={4}
@@ -1212,19 +1215,6 @@ function ApplyPage() {
                       style={{ ...applyInputStyle, resize: "vertical", lineHeight: 1.6 }}
                     />
                     {errors.pastEvents && <div style={applyErrorStyle}>{errors.pastEvents}</div>}
-                  </div>
-
-                  <div style={applyFieldStyle}>
-                    <label htmlFor="references" style={applyLabelStyle}>
-                      References to people associated with Time Together or Divine Timing
-                      <span style={applyOptionalStyle}>optional</span>
-                    </label>
-                    <textarea
-                      id="references" name="references" rows={2}
-                      value={formData.references} onChange={update("references")}
-                      style={{ ...applyInputStyle, resize: "vertical", lineHeight: 1.6 }}
-                    />
-                    {errors.references && <div style={applyErrorStyle}>{errors.references}</div>}
                   </div>
                 </div>
 

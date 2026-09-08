@@ -47,7 +47,7 @@ const EVENTS = [
       {
         heading: "How this works",
         items: [
-          "This is an application, not a ticket sale — approved applicants receive the ticket link by email.",
+          "Approved applicants will receive a ticket link by email.",
           { text: "Tiered pricing:", trail: "Early Bird ticket sales end soon." },
           "Location goes to ticket holders 24 hours before doors.",
         ],

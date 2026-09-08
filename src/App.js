@@ -43,10 +43,7 @@ const EVENTS = [
     venue: "Undisclosed Location",
     applicationsOpen: true,
     applyIntro: [
-      {
-        title: "A Divine Time Together, Vol. I",
-        text: "House legend Halo Varga plays an extended set — the first meeting of Time Together and Divine Timing. Sherman on support.",
-      },
+      "House legend Halo Varga plays a rare extended set. Sherman on support.",
       {
         heading: "How this works",
         items: [

@@ -964,7 +964,7 @@ function ApplyPage() {
   const [formData, setFormData] = useState({
     fullName: "", email: "", phone: "", instagram: "",
     pastEvents: "",
-    emailOptIn: false, smsOptIn: false, company: "",
+    emailOptIn: false, smsOptIn: false, xq_note: "",
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -1001,7 +1001,7 @@ function ApplyPage() {
 
   const handleSubmit = async () => {
     // Honeypot: a bot filled the hidden field. Show success, send nothing.
-    if (formData.company) {
+    if (formData.xq_note) {
       setSubmitted(true);
       return;
     }
@@ -1277,13 +1277,17 @@ function ApplyPage() {
           </>
         )}
 
-        {/* Honeypot — off-screen, never focused, never read aloud. */}
+        {/* Honeypot — off-screen, never focused, never read aloud. The name and
+            label are deliberately meaningless: an earlier version used a real
+            profile word for both, which password managers recognised and
+            autofilled, tripping the trap on genuine applicants. Browsers
+            respect autoComplete="one-time-code"; they routinely ignore "off". */}
         <div style={{ position: "absolute", left: -9999 }}>
-          <label htmlFor="company" style={applyLabelStyle}>Company</label>
+          <label htmlFor="xq_note" style={applyLabelStyle}>xq_note</label>
           <input
-            id="company" name="company" type="text"
-            value={formData.company} onChange={update("company")}
-            tabIndex={-1} autoComplete="off" aria-hidden="true"
+            id="xq_note" name="xq_note" type="text"
+            value={formData.xq_note} onChange={update("xq_note")}
+            tabIndex={-1} autoComplete="one-time-code" aria-hidden="true"
             style={{ fontSize: "16px" }}
           />
         </div>

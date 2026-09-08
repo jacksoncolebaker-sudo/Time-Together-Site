@@ -1043,6 +1043,7 @@ function ApplyPage() {
       fetch(SHEET_ENDPOINT, {
         method: "POST",
         mode: "no-cors",
+        keepalive: true,
         body: JSON.stringify({
           secret: SHEET_SECRET,
           event_id: resolvedEvent.id,

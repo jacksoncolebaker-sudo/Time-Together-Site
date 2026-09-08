@@ -1055,6 +1055,16 @@ function ApplyPage() {
           sms_opt_in: Boolean(formData.smsOptIn),
         }),
       }).catch(() => {});
+      // Ad blockers strip fbq entirely, so this is guarded twice over: a
+      // missing pixel must never keep an applicant off the success screen.
+      try {
+        if (typeof window.fbq === "function") {
+          window.fbq("track", "Lead", {
+            content_name: resolvedEvent.title,
+            content_category: "event_application"
+          });
+        }
+      } catch (e) {}
       setSubmitted(true);
     } catch (err) {
       // Nothing is cleared here — the user's answers stay in formData.
@@ -1353,10 +1363,21 @@ export default function App() {
   const [page, setPage] = useState(() => pageFromPath(window.location.pathname));
   const [route, setRoute] = useState(() => window.location.pathname + window.location.search);
 
+  // The pixel's base code counts the initial load, so these only cover
+  // in-app navigation: back/forward here, link clicks in changePage.
+  const trackPageView = () => {
+    try {
+      if (typeof window.fbq === "function") {
+        window.fbq("track", "PageView");
+      }
+    } catch (e) {}
+  };
+
   useEffect(() => {
     const onPopState = () => {
       setPage(pageFromPath(window.location.pathname));
       setRoute(window.location.pathname + window.location.search);
+      trackPageView();
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
@@ -1374,6 +1395,7 @@ export default function App() {
     }
     setPage(p);
     setRoute(url);
+    trackPageView();
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 

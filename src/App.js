@@ -92,7 +92,6 @@ const APPLY_CLOSED_LABEL = "Applications closed";
 const HOUSE_RULES = [
   "21+ with valid ID.",
   "Keep phone use to a minimum while on the dancefloor.",
-  "Applications are read individually. Approval is not guaranteed.",
   "Treat everyone with respect.",
   "Re-entry is allowed. Please be quiet if stepping outside.",
 ];

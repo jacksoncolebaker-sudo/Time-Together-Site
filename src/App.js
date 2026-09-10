@@ -48,7 +48,9 @@ const EVENTS = [
         heading: "How this works",
         items: [
           "Approved applicants will receive a ticket link by email.",
-          { text: "Tiered pricing:", trail: "Early Bird ticket sales end soon." },
+          // Whole line is the accent `lead`, so it stays red now that there is
+          // no plain-text half in front of it.
+          { lead: "General sale tickets available now." },
           "Location goes to ticket holders 24 hours before doors.",
         ],
       },

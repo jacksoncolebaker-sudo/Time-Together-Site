@@ -1130,19 +1130,21 @@ function ApplyPage() {
             }}>{resolvedEvent.date}</p>
 
             {submitted ? (
-              // Routed through IntroRun so the spam warning and the ticketing
-              // address get the same accent-red lead and linked-address
-              // treatment they have in the description above.
+              // The applicant's own address is echoed back in the accent style
+              // rather than through IntroRun — linkifyEmails would turn it into
+              // a mailto pointing at themselves. formData is never cleared on
+              // submit, so the address is still here to show.
               <div>
-                <p style={applyBodyStyle}>Thank you for your application!</p>
+                <p style={applyBodyStyle}>Thank you for your application.</p>
                 <p style={applyBodyStyle}>
-                  <IntroRun line={{
-                    lead: "Check your spam folder.",
-                    text: "Our reply may land there. Also, add ticketing@timetogetherprod.com to your email contacts so you don't miss it.",
-                  }} />
+                  We have sent a confirmation email to{" "}
+                  <span style={introAccentStyle}>
+                    {formData.email.trim() || "your inbox"}
+                  </span>{" "}
+                  (please check your spam folder for the confirmation email).
                 </p>
                 <p style={applyBodyStyle}>
-                  Every application is deeply appreciated. We look forward to seeing you on the dancefloor soon enough.
+                  Your interest is greatly appreciated. We look forward to seeing you soon.
                 </p>
               </div>
             ) : (

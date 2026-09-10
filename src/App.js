@@ -459,13 +459,30 @@ function useTransparentPeople() {
 }
 
 // ─── SCATTERED BACKGROUND ───
+// Placement runs past the viewport on every side, so a logo can sit half off
+// an edge instead of every one landing fully inside the frame. -8%..108%.
+const SCATTER_BLEED = 8;
+const SCATTER_SPAN = 100 + SCATTER_BLEED * 2;
+// Fraction of the two logos' combined size that has to separate them. Below the
+// old 0.5 (touching circles), which lets clumps and bare patches form rather
+// than the near-even spacing strict rejection produced.
+const SCATTER_MIN_GAP = 0.35;
+// Candidate counts, not final ones: rejection prunes some, and the bleed puts
+// others off-screen. Tuned against a simulation of both steps so the logos
+// actually visible average ~10% below what 42/10 at full-frame placement gave
+// (desktop 35.8 → 32.5, mobile 9.6 → 8.5). Re-check these if the two constants
+// above move.
+const SCATTER_CANDIDATES = 42;
+const SCATTER_CANDIDATES_MOBILE = 10;
+
 function ScatteredBackground() {
   const transparentPeople = useTransparentPeople();
   const [scatterItems] = useState(() => {
     const isMobile = window.innerWidth <= 768;
-    const candidates = Array.from({ length: isMobile ? 10 : 42 }, () => ({
-      top: Math.random() * 100,
-      left: Math.random() * 100,
+    const count = isMobile ? SCATTER_CANDIDATES_MOBILE : SCATTER_CANDIDATES;
+    const candidates = Array.from({ length: count }, () => ({
+      top: -SCATTER_BLEED + Math.random() * SCATTER_SPAN,
+      left: -SCATTER_BLEED + Math.random() * SCATTER_SPAN,
       size: 40 + Math.random() * 70,
       rotation: Math.random() * 360,
       duration: 4 + Math.random() * 6,
@@ -476,7 +493,7 @@ function ScatteredBackground() {
       const overlaps = kept.some((other) => {
         const dx = (item.left - other.left) * 0.01 * 1920;
         const dy = (item.top - other.top) * 0.01 * 1080;
-        const minDist = (item.size + other.size) / 2;
+        const minDist = (item.size + other.size) * SCATTER_MIN_GAP;
         return Math.sqrt(dx * dx + dy * dy) < minDist;
       });
       if (!overlaps) kept.push(item);

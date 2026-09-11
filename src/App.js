@@ -1099,11 +1099,6 @@ function ApplyPage() {
     <div style={{ minHeight: "100vh", padding: "120px clamp(12px, 4vw, 32px) 80px", position: "relative", overflow: "hidden" }}>
       <ScatteredBackground />
       <div style={{ maxWidth: "800px", margin: "0 auto", minWidth: 0, position: "relative", zIndex: 1 }}>
-        <span style={{
-          fontFamily: "'Lato', sans-serif", fontSize: "12px",
-          letterSpacing: "4px", color: AMBER_LIGHT, textTransform: "uppercase",
-        }}>Apply</span>
-
         {/* STATE A — nothing resolvable and nothing open */}
         {!resolvedEvent && (
           <>

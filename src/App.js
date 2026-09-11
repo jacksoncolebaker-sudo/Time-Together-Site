@@ -60,7 +60,7 @@ const EVENTS = [
           // Whole line is the accent `lead`, so it stays red now that there is
           // no plain-text half in front of it.
           { lead: "General sale tickets available now." },
-          "Location goes to ticket holders 24 hours before doors.",
+          "Exact location (Seattle) will be sent to ticket holders 24 hours before doors.",
         ],
       },
       // The address is spelled out rather than read from CONTACT_EMAIL: that

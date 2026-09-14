@@ -1339,7 +1339,7 @@ function ApplyPage() {
 
                   <div style={applyFieldStyle}>
                     <label htmlFor="pastEvents" style={applyLabelStyle}>
-                      What sort of events have you attended in the past?
+                      Past events attended and/or references to people in the community
                       <span style={applyOptionalStyle}>optional</span>
                     </label>
                     <textarea

@@ -952,6 +952,10 @@ const applyOptionalStyle = {
   letterSpacing: "1px", color: AMBER_LIGHT, textTransform: "none",
   marginLeft: "8px",
 };
+// An aside on a label that is not the optional marker. Same quiet lowercase
+// treatment, but in TEXT_DIM — red here would read as "optional" on a field
+// that is required.
+const applyNoteStyle = { ...applyOptionalStyle, color: TEXT_DIM };
 // The one thing on the page that has to be read. Bolder and brighter than the
 // 13px oxblood it used to be, with a rule down the left edge so it reads as
 // attached to the field above it rather than as more body copy.
@@ -1324,7 +1328,9 @@ function ApplyPage() {
                   </div>
 
                   <div style={applyFieldStyle}>
-                    <label htmlFor="instagram" style={applyLabelStyle}>Instagram</label>
+                    <label htmlFor="instagram" style={applyLabelStyle}>
+                      Instagram<span style={applyNoteStyle}>(please keep public)</span>
+                    </label>
                     <input
                       id="instagram" name="instagram" type="text" placeholder="@handle"
                       value={formData.instagram} onChange={update("instagram")}

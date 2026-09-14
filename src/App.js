@@ -78,6 +78,9 @@ const EVENTS = [
     day: "FRI",
     artists: ["Sherman"],
     time: "10:00 - 05:00",
+    // Prose form of `time` for the apply page header, where the line is read
+    // rather than scanned. Keep the two in step.
+    timeLabel: "10pm to 5am",
     ticketLink: null,
     poster: haloVargaPoster,
     posterAlt: "Halo Varga with Sherman — September 18th, 2026, undisclosed location",
@@ -1219,7 +1222,12 @@ function ApplyPage() {
               fontFamily: "'Lato', sans-serif", fontSize: "14px",
               letterSpacing: "2px", color: TEXT_DIM, textTransform: "uppercase",
               marginBottom: "32px",
-            }}>{resolvedEvent.date}</p>
+            }}>
+              {resolvedEvent.date}
+              {/* Guarded so an event without a timeLabel does not print a
+                  separator with nothing after it. */}
+              {resolvedEvent.timeLabel && <>&nbsp;·&nbsp;{resolvedEvent.timeLabel}</>}
+            </p>
 
             {submitted ? (
               // The applicant's own address is echoed back in the accent style

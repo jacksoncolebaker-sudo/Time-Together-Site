@@ -1068,7 +1068,7 @@ function ApplyPage() {
   const [formData, setFormData] = useState({
     fullName: "", email: "", phone: "", instagram: "",
     pastEvents: "",
-    emailOptIn: false, smsOptIn: false, xq_note: "",
+    smsOptIn: false, xq_note: "",
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -1156,7 +1156,8 @@ function ApplyPage() {
           // email template keep their shape; drop it once the Apps Script is
           // updated to no longer read it.
           references: "",
-          email_opt_in: formData.emailOptIn,
+          // Retired field — see `references` above.
+          email_opt_in: false,
           sms_opt_in: formData.smsOptIn,
         }),
       });
@@ -1185,7 +1186,7 @@ function ApplyPage() {
           instagram: formData.instagram,
           past_events: formData.pastEvents,
           references: "", // retired field — see the Web3Forms body above
-          email_opt_in: Boolean(formData.emailOptIn),
+          email_opt_in: false, // retired field — see the Web3Forms body above
           sms_opt_in: Boolean(formData.smsOptIn),
         }),
       }).catch(() => {});
@@ -1398,18 +1399,8 @@ function ApplyPage() {
                   </div>
                 </div>
 
-                {/* Opt-ins — both off by default */}
-                <div style={{ display: "flex", gap: "12px", marginTop: "32px", marginBottom: "16px" }}>
-                  <input
-                    id="emailOptIn" name="emailOptIn" type="checkbox"
-                    checked={formData.emailOptIn} onChange={update("emailOptIn")}
-                    style={applyCheckboxStyle}
-                  />
-                  <label htmlFor="emailOptIn" style={applyCheckboxLabelStyle}>
-                    Email me about future Time Together events.
-                  </label>
-                </div>
-                <div style={{ display: "flex", gap: "12px", marginBottom: "8px" }}>
+                {/* Opt-in — off by default */}
+                <div style={{ display: "flex", gap: "12px", marginTop: "32px", marginBottom: "8px" }}>
                   <input
                     id="smsOptIn" name="smsOptIn" type="checkbox"
                     checked={formData.smsOptIn} onChange={update("smsOptIn")}

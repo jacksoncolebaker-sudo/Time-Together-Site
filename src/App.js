@@ -1068,7 +1068,7 @@ function ApplyPage() {
 
   const [formData, setFormData] = useState({
     fullName: "", email: "", phone: "", instagram: "",
-    pastEvents: "",
+    pastEvents: "", references: "",
     smsOptIn: false, xq_note: "",
   });
   const [errors, setErrors] = useState({});
@@ -1156,11 +1156,10 @@ function ApplyPage() {
           phone: formData.phone,
           instagram: formData.instagram,
           past_events: formData.pastEvents,
+          references: formData.references,
           // Retired field. The key stays so the sheet's column mapping and the
           // email template keep their shape; drop it once the Apps Script is
           // updated to no longer read it.
-          references: "",
-          // Retired field — see `references` above.
           email_opt_in: false,
           sms_opt_in: formData.smsOptIn,
         }),
@@ -1189,7 +1188,7 @@ function ApplyPage() {
           phone: formData.phone,
           instagram: formData.instagram,
           past_events: formData.pastEvents,
-          references: "", // retired field — see the Web3Forms body above
+          references: formData.references,
           email_opt_in: false, // retired field — see the Web3Forms body above
           sms_opt_in: Boolean(formData.smsOptIn),
         }),
@@ -1399,6 +1398,19 @@ function ApplyPage() {
                     {errors.pastEvents && (
                       <div id="pastEvents-error" role="alert" style={applyErrorStyle}>{errors.pastEvents}</div>
                     )}
+                  </div>
+
+                  <div style={applyFieldStyle}>
+                    <label htmlFor="references" style={applyLabelStyle}>
+                      References to people in the community
+                      <span style={applyOptionalStyle}>optional</span>
+                    </label>
+                    <textarea
+                      id="references" name="references" rows={4}
+                      value={formData.references} onChange={update("references")}
+                      className="apply-input"
+                      style={{ ...applyInputStyle, resize: "vertical", lineHeight: 1.6 }}
+                    />
                   </div>
                 </div>
 

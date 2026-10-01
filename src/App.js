@@ -71,7 +71,6 @@ const EVENTS = [
         text: "Approval emails may land in spam. Add ticketing@timetogetherprod.com to your contacts to avoid this.",
       },
     ],
-    extraRules: [],
     paymentLink: "",
     past: true,
     cardDate: "SEP 18",
@@ -111,7 +110,6 @@ const EVENTS = [
         text: "Approval emails may land in spam. Add ticketing@timetogetherprod.com to your contacts to avoid this.",
       },
     ],
-    extraRules: [], // TODO confirm for shakolin
     paymentLink: "", // TODO confirm for shakolin
     past: false,
     cardDate: "OCT 30",
@@ -138,14 +136,6 @@ const CONTACT_EMAIL = "ticketing@timetogetherprod.com";
 
 const APPLY_BUTTON_LABEL = "Ticketing & Details";
 const APPLY_CLOSED_LABEL = "Applications closed";
-
-// Rules shown for EVERY event, before the event's extraRules
-const HOUSE_RULES = [
-  "21+ with valid ID.",
-  "Keep phone use to a minimum while on the dancefloor.",
-  "Treat everyone with respect.",
-  "Re-entry is allowed. Please be quiet if stepping outside.",
-];
 
 // ─── STYLES ───
 const globalCSS = `
@@ -290,16 +280,14 @@ const globalCSS = `
   }
 
   /* Section label inside the description — the site's small-caps treatment,
-     kept at full text colour because this is primary copy, unlike the quieter
-     house-rules heading below the form. */
+     kept at full text colour because this is primary copy. */
   .apply-intro-heading {
     font-family: 'Lato', sans-serif;
     font-size: 12px; font-weight: 700; letter-spacing: 3px;
     text-transform: uppercase; color: ${TEXT_PRIMARY};
     margin-top: 28px; margin-bottom: 14px;
   }
-  /* Body-sized, unlike the house-rules list: these are terms the applicant
-     needs to read, not fine print. */
+  /* Body-sized: these are terms the applicant needs to read, not fine print. */
   .apply-intro-list {
     padding-left: 20px; margin-bottom: 16px;
   }
@@ -1410,25 +1398,8 @@ function ApplyPage() {
                   </div>
                 </div>
 
-                {/* Rules — quieter than the form on purpose */}
-                <div style={{ marginTop: "8px", marginBottom: "32px" }}>
-                  <h2 style={{
-                    fontFamily: "'Lato', sans-serif", fontSize: "12px", fontWeight: 700,
-                    letterSpacing: "3px", color: TEXT_DIM, textTransform: "uppercase",
-                    marginBottom: "12px",
-                  }}>House rules</h2>
-                  <ul style={{ paddingLeft: "18px" }}>
-                    {HOUSE_RULES.concat(resolvedEvent.extraRules).map((rule, i) => (
-                      <li key={i} style={{
-                        fontFamily: "'Lato', sans-serif", fontSize: "13px",
-                        lineHeight: 1.7, color: TEXT_MUTED, marginBottom: "4px",
-                      }}>{rule}</li>
-                    ))}
-                  </ul>
-                </div>
-
                 {/* Opt-ins — both off by default */}
-                <div style={{ display: "flex", gap: "12px", marginBottom: "16px" }}>
+                <div style={{ display: "flex", gap: "12px", marginTop: "32px", marginBottom: "16px" }}>
                   <input
                     id="emailOptIn" name="emailOptIn" type="checkbox"
                     checked={formData.emailOptIn} onChange={update("emailOptIn")}

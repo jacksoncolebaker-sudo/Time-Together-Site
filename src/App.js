@@ -1,5 +1,5 @@
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
-import haloVargaPoster from "./halo-varga-poster.jpg";
+import shakolinPoster from "./shakolin-poster.jpg";
 
 const AMBER = "#8B1A1A";
 const AMBER_LIGHT = "#A62626";
@@ -73,7 +73,7 @@ const EVENTS = [
     ],
     extraRules: [],
     paymentLink: "",
-    past: false,
+    past: true,
     cardDate: "SEP 18",
     day: "FRI",
     artists: ["Sherman"],
@@ -82,8 +82,10 @@ const EVENTS = [
     // rather than scanned. Keep the two in step.
     timeLabel: "10pm to 5am",
     ticketLink: null,
-    poster: haloVargaPoster,
-    posterAlt: "Halo Varga with Sherman — September 18th, 2026, undisclosed location",
+    // Poster retired with the event. The archive renders the text card, which
+    // reads cardDate/day/artists/time instead.
+    poster: null,
+    posterAlt: null,
   },
   {
     id: "shakolin",
@@ -124,9 +126,8 @@ const EVENTS = [
     // rather than scanned. Keep the two in step.
     timeLabel: "10pm to 5am", // TODO confirm for shakolin
     ticketLink: null, // TODO confirm for shakolin
-    poster: haloVargaPoster, // TODO confirm for shakolin
-    // TODO confirm for shakolin
-    posterAlt: "Halo Varga with Sherman — September 18th, 2026, undisclosed location",
+    poster: shakolinPoster,
+    posterAlt: "Shakolin with Natebytheway and Barcode (KJ3 & Edders) — A Divine Time Together Vol. II, October 30th, 2026, private location, 22:00 to 06:00",
   },
 ];
 

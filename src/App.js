@@ -94,17 +94,13 @@ const EVENTS = [
     dateISO: "2026-10-30",
     venue: "Private Venue",
     applicationsOpen: true,
-    // TODO confirm for shakolin
     applyIntro: [
-      "House legend Halo Varga plays a rare extended set. Sherman on support.",
+      "Underground savant Shakolin joins us for a night of wonderful music. Natebytheway (SF) and Barcode (KJ3 & Edders) open up the night.",
       {
         heading: "How this works",
         items: [
-          "Approved applicants will receive a ticket link by email.",
-          // Whole line is the accent `lead`, so it stays red now that there is
-          // no plain-text half in front of it.
-          { lead: "General sale tickets available now." },
-          "Exact location (Seattle) will be sent to ticket holders 24 hours before doors.",
+          "Tickets will be sent via email (check spam inbox).",
+          "Exact location (Seattle) will be sent to ticket holders at 12pm the day of show.",
         ],
       },
       // The address is spelled out rather than read from CONTACT_EMAIL: that
@@ -121,10 +117,10 @@ const EVENTS = [
     cardDate: "OCT 30",
     day: "FRI",
     artists: ["Sherman"], // TODO confirm for shakolin
-    time: "10:00 - 05:00", // TODO confirm for shakolin
+    time: "22:00 - 06:00",
     // Prose form of `time` for the apply page header, where the line is read
     // rather than scanned. Keep the two in step.
-    timeLabel: "10pm to 5am", // TODO confirm for shakolin
+    timeLabel: "10pm to 6am",
     ticketLink: null, // TODO confirm for shakolin
     poster: shakolinPoster,
     posterAlt: "Shakolin with Natebytheway and Barcode (KJ3 & Edders) — A Divine Time Together Vol. II, October 30th, 2026, private location, 22:00 to 06:00",

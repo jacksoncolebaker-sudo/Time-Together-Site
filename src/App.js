@@ -1002,6 +1002,7 @@ const APPLY_FIELDS = [
   { key: "fullName", label: "Full Name" },
   { key: "email", label: "Email" },
   { key: "instagram", label: "Instagram" },
+  { key: "pastEvents", label: "Past Events" },
   { key: "smsOptIn", label: "Phone Number", focusId: "phone" },
 ];
 const joinLabels = (labels) =>
@@ -1106,6 +1107,9 @@ function ApplyPage() {
     }
     if (!formData.instagram.trim()) {
       next.instagram = "Your Instagram handle is missing — enter it like @timetogether.";
+    }
+    if (!formData.pastEvents.trim()) {
+      next.pastEvents = "Tell us which events you have been to. If this would be your first, write that.";
     }
     if (formData.smsOptIn && !formData.phone.trim()) {
       next.smsOptIn = "You asked to be texted, but the phone number above is empty. Add it, or uncheck that box.";
@@ -1382,8 +1386,7 @@ function ApplyPage() {
 
                   <div style={applyFieldStyle}>
                     <label htmlFor="pastEvents" style={applyLabelStyle}>
-                      Past events attended and/or references to people in the community
-                      <span style={applyOptionalStyle}>optional</span>
+                      Past events attended
                     </label>
                     <textarea
                       id="pastEvents" name="pastEvents" rows={4}

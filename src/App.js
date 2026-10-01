@@ -50,7 +50,7 @@ const EVENTS = [
     date: "September 18th, 2026",
     dateISO: "2026-09-18",
     venue: "Undisclosed Location",
-    applicationsOpen: true,
+    applicationsOpen: false,
     applyIntro: [
       "House legend Halo Varga plays a rare extended set. Sherman on support.",
       {
@@ -83,6 +83,49 @@ const EVENTS = [
     timeLabel: "10pm to 5am",
     ticketLink: null,
     poster: haloVargaPoster,
+    posterAlt: "Halo Varga with Sherman — September 18th, 2026, undisclosed location",
+  },
+  {
+    id: "shakolin",
+    title: "Shakolin",
+    date: "Oct 30th, 2026",
+    dateISO: "2026-10-30",
+    venue: "Private Venue",
+    applicationsOpen: true,
+    // TODO confirm for shakolin
+    applyIntro: [
+      "House legend Halo Varga plays a rare extended set. Sherman on support.",
+      {
+        heading: "How this works",
+        items: [
+          "Approved applicants will receive a ticket link by email.",
+          // Whole line is the accent `lead`, so it stays red now that there is
+          // no plain-text half in front of it.
+          { lead: "General sale tickets available now." },
+          "Exact location (Seattle) will be sent to ticket holders 24 hours before doors.",
+        ],
+      },
+      // The address is spelled out rather than read from CONTACT_EMAIL: that
+      // constant is declared below EVENTS, so referencing it here would hit the
+      // temporal dead zone at module load.
+      {
+        lead: "Important:",
+        text: "Approval emails may land in spam. Add ticketing@timetogetherprod.com to your contacts to avoid this.",
+      },
+    ],
+    extraRules: [], // TODO confirm for shakolin
+    paymentLink: "", // TODO confirm for shakolin
+    past: false,
+    cardDate: "OCT 30",
+    day: "FRI",
+    artists: ["Sherman"], // TODO confirm for shakolin
+    time: "10:00 - 05:00", // TODO confirm for shakolin
+    // Prose form of `time` for the apply page header, where the line is read
+    // rather than scanned. Keep the two in step.
+    timeLabel: "10pm to 5am", // TODO confirm for shakolin
+    ticketLink: null, // TODO confirm for shakolin
+    poster: haloVargaPoster, // TODO confirm for shakolin
+    // TODO confirm for shakolin
     posterAlt: "Halo Varga with Sherman — September 18th, 2026, undisclosed location",
   },
 ];
@@ -1068,9 +1111,12 @@ function ApplyPage() {
     if (!formData.fullName.trim()) {
       next.fullName = "Your full name is missing.";
     }
-    if (!formData.email.trim()) {
+    // Trimmed once here and sent trimmed below, so an address pasted with a
+    // stray space is not turned away by the regex.
+    const email = formData.email.trim();
+    if (!email) {
       next.email = "Your email address is missing — the ticket link is sent there.";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       next.email = "That email address does not look right. It should read like name@example.com.";
     }
     if (!formData.instagram.trim()) {
@@ -1117,7 +1163,7 @@ function ApplyPage() {
           event_title: resolvedEvent.title,
           event_date: resolvedEvent.date,
           full_name: formData.fullName,
-          email: formData.email,
+          email: formData.email.trim(),
           phone: formData.phone,
           instagram: formData.instagram,
           past_events: formData.pastEvents,
@@ -1129,7 +1175,12 @@ function ApplyPage() {
           sms_opt_in: formData.smsOptIn,
         }),
       });
-      if (!res.ok) throw new Error("Submission rejected");
+      // Web3Forms can answer 200 with success:false (rejected access key,
+      // spam filtered), so the body is the verdict rather than the status.
+      const result = await res.json().catch(() => null);
+      if (!res.ok || !result || result.success !== true) {
+        throw new Error("Submission rejected");
+      }
       // Mirror into the sheet. Deliberately not awaited: the email above is the
       // primary channel, so a slow or failed copy must never hold up the
       // success message or surface to the applicant. no-cors keeps Apps Script
@@ -1144,7 +1195,7 @@ function ApplyPage() {
           event_id: resolvedEvent.id,
           event_title: resolvedEvent.title,
           full_name: formData.fullName,
-          email: formData.email,
+          email: formData.email.trim(),
           phone: formData.phone,
           instagram: formData.instagram,
           past_events: formData.pastEvents,

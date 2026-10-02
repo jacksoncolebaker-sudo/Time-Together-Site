@@ -1279,7 +1279,7 @@ function ApplyPage() {
               // a mailto pointing at themselves. formData is never cleared on
               // submit, so the address is still here to show.
               <div>
-                <p style={applyBodyStyle}>Thank you for your application.</p>
+                <p style={applyBodyStyle}>Thank you for signing up!</p>
                 <p style={applyBodyStyle}>
                   We have sent a confirmation email to{" "}
                   <span style={introAccentStyle}>
@@ -1287,9 +1287,7 @@ function ApplyPage() {
                   </span>{" "}
                   (please check your spam folder for the confirmation email).
                 </p>
-                <p style={applyBodyStyle}>
-                  Your interest is greatly appreciated. We look forward to seeing you soon.
-                </p>
+                <p style={applyBodyStyle}>We look forward to seeing you soon.</p>
               </div>
             ) : (
               <>

@@ -239,19 +239,17 @@ const globalCSS = `
         0 14px 34px rgba(0,0,0,0.55);
     }
   }
-  /* Mail links in the description: bold white, underline included. The
-     underline is what marks it as a link, since colour and weight now match
-     the copy around it. Hover flips it red so the state change is clear. */
+  /* Mail links in the description: bold white, no underline. Hover and
+     keyboard focus flip it red, which is the only mark that it is a link —
+     the browser keeps its own focus ring on top of that. */
   .apply-mail {
     color: #FFFFFF; font-weight: 700;
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    text-decoration-color: #FFFFFF;
+    text-decoration: none;
     overflow-wrap: anywhere;
-    transition: color 0.3s ease, text-decoration-color 0.3s ease;
+    transition: color 0.3s ease;
   }
   .apply-mail:hover, .apply-mail:focus-visible {
-    color: ${AMBER_LIGHT}; text-decoration-color: ${AMBER_LIGHT};
+    color: ${AMBER_LIGHT};
   }
 
   /* Form field boxes. The border lives here rather than in applyInputStyle so

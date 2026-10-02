@@ -1074,6 +1074,14 @@ function ApplyPage() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
+  // The submit button sits at the foot of a long form, so the confirmation
+  // would otherwise open scrolled past its own first line. Before paint, and
+  // "instant" against the page's global smooth scrolling, so it reads as a new
+  // screen rather than as the form sliding away.
+  useLayoutEffect(() => {
+    if (submitted) window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [submitted]);
+
   const update = (key) => (e) => {
     const value = e.target.type === "checkbox" ? e.target.checked : e.target.value;
     setFormData((prev) => ({ ...prev, [key]: value }));

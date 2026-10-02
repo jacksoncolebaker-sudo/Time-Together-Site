@@ -1074,6 +1074,14 @@ function ApplyPage() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
+  // Arriving from a card button means arriving from wherever that card sat on
+  // the page behind it. changePage already scrolls, but smoothly: this lands
+  // the form at its first line before paint instead of gliding up to it. The
+  // page is keyed on the route, so switching events remounts and runs it again.
+  useLayoutEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, []);
+
   // The submit button sits at the foot of a long form, so the confirmation
   // would otherwise open scrolled past its own first line. Before paint, and
   // "instant" against the page's global smooth scrolling, so it reads as a new

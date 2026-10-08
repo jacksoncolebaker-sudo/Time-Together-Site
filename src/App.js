@@ -1052,6 +1052,20 @@ function IntroRun({ line }) {
   );
 }
 
+// Puts the window at the top now, not over a quarter second of animation.
+// Turning the html rule off for the duration is what makes it immediate:
+// `behavior: "instant"` is refused by browsers that still honour the CSS, and
+// a bare scrollTo(0, 0) inherits the smooth scrolling from it instead.
+function jumpToTop() {
+  const root = document.documentElement;
+  const previous = root.style.scrollBehavior;
+  root.style.scrollBehavior = "auto";
+  window.scrollTo(0, 0);
+  root.scrollTop = 0;
+  if (document.body) document.body.scrollTop = 0;
+  root.style.scrollBehavior = previous;
+}
+
 function ApplyPage() {
   const params = new URLSearchParams(window.location.search);
   const requestedId = params.get("event");
@@ -1079,15 +1093,21 @@ function ApplyPage() {
   // the form at its first line before paint instead of gliding up to it. The
   // page is keyed on the route, so switching events remounts and runs it again.
   useLayoutEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    jumpToTop();
   }, []);
 
   // The submit button sits at the foot of a long form, so the confirmation
-  // would otherwise open scrolled past its own first line. Before paint, and
-  // "instant" against the page's global smooth scrolling, so it reads as a new
-  // screen rather than as the form sliding away.
+  // would otherwise open scrolled past its own first line. Before paint, so
+  // the screen is never shown at the old offset.
   useLayoutEffect(() => {
-    if (submitted) window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    if (!submitted) return;
+    jumpToTop();
+    // Again on the next frame. The confirmation is a fraction of the height of
+    // the form it replaces, and whatever the browser settles after that paint —
+    // scroll anchoring, a smooth scroll still in flight from a failed submit —
+    // gets its say after this effect, not before it.
+    const frame = requestAnimationFrame(jumpToTop);
+    return () => cancelAnimationFrame(frame);
   }, [submitted]);
 
   const update = (key) => (e) => {

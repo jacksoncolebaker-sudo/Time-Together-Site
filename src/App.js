@@ -126,6 +126,50 @@ const EVENTS = [
 ];
 
 // ============================================
+// PRIVACY POLICY — the /privacy page, verbatim. The closing thank-you is the
+// second paragraph of the last section, which is where it sits in the policy
+// as written: no heading of its own follows it.
+// ============================================
+const PRIVACY_POLICY = {
+  title: "PRIVACY POLICY",
+  effectiveDate: "Effective Date: October 13, 2026",
+  intro: "We value your privacy and make every effort to respect your wishes and personal information. Please read this policy carefully to understand how we collect, use, and manage your phone numbers.",
+  sections: [
+    {
+      heading: "COLLECTION OF PHONE NUMBERS",
+      paragraphs: [
+        "We collect your phone numbers only when you voluntarily provide them to us, for example, during transactions, inquiries, or when you sign up to receive notification messages. You can opt in to receive these SMS messages by providing your phone number.",
+      ],
+    },
+    {
+      heading: "USE OF PHONE NUMBERS FOR SMS",
+      paragraphs: [
+        "SMS messaging charges may be applied by your carrier. We will only share your phone number with our SMS provider, subject to their privacy policy.",
+      ],
+    },
+    {
+      heading: "OPTING OUT OF MESSAGES",
+      paragraphs: [
+        "If at any time you wish to stop receiving messages from us, you can opt out by texting STOP.",
+      ],
+    },
+    {
+      heading: "PRIVACY OF PHONE NUMBERS",
+      paragraphs: [
+        "Once you have opted out, we will not send you any more SMS messages, nor will we sell or transfer your phone number to another party.",
+      ],
+    },
+    {
+      heading: "CHANGES TO THIS POLICY",
+      paragraphs: [
+        "We may periodically update this policy. We will notify you about significant changes in the way we treat your information by placing a prominent notice on our site.",
+        "We thank you for your understanding and cooperation. If you have any questions or concerns about this policy, please feel free to contact us via the form on our site.",
+      ],
+    },
+  ],
+};
+
+// ============================================
 // APPLICATION FORM SETTINGS
 // ============================================
 const FORM_ENDPOINT = "https://api.web3forms.com/submit";
@@ -1461,6 +1505,22 @@ function ApplyPage() {
                   <div id="smsOptIn-error" role="alert" style={applyErrorStyle}>{errors.smsOptIn}</div>
                 )}
 
+                {/* Sits with the opt-in because that is the box it explains. A new
+                    tab on purpose: a half-filled application is not worth losing to
+                    a policy read, and nothing here clears formData on the way back. */}
+                <a
+                  href="/privacy" target="_blank" rel="noopener noreferrer"
+                  style={{
+                    fontFamily: "'Lato', sans-serif", fontSize: "13px",
+                    letterSpacing: "1px", color: TEXT_MUTED, textDecoration: "none",
+                    display: "inline-flex", alignItems: "center",
+                    minHeight: "44px", minWidth: "44px",
+                    transition: "color 0.3s",
+                  }}
+                  onMouseEnter={(e) => { e.target.style.color = TEXT_DIM; }}
+                  onMouseLeave={(e) => { e.target.style.color = TEXT_MUTED; }}
+                >Privacy Policy</a>
+
                 {/* Why the button appeared to do nothing. The per-field messages
                     may all be scrolled off by the time the applicant is down
                     here, so this names the fields and says outright that nothing
@@ -1513,7 +1573,63 @@ function ApplyPage() {
 }
 
 // ─── FOOTER ───
-function Footer() {
+const privacyBodyStyle = {
+  fontFamily: "'Lato', sans-serif", fontSize: "17px", lineHeight: 1.85,
+  color: TEXT_PRIMARY, marginBottom: "18px", overflowWrap: "break-word",
+};
+
+// ─── PRIVACY POLICY PAGE ───
+// A reading page rather than a landing one: a 720px column, 17px body copy and
+// headings a step quieter than an event title, since the whole page is text and
+// nothing on it is competing for the eye.
+function PrivacyPage() {
+  useEffect(() => {
+    const previous = document.title;
+    document.title = "Privacy Policy — Time Together";
+    return () => { document.title = previous; };
+  }, []);
+
+  return (
+    <div style={{ minHeight: "100vh", padding: "120px clamp(12px, 4vw, 32px) 80px", position: "relative", overflow: "hidden" }}>
+      <ScatteredBackground />
+      <div style={{ maxWidth: "720px", margin: "0 auto", minWidth: 0, position: "relative", zIndex: 1 }}>
+        <div style={{ width: "40px", height: "1px", background: AMBER, marginBottom: "32px" }} />
+        <h1 style={{
+          fontFamily: "'Lato', sans-serif", fontSize: "clamp(30px, 5vw, 52px)", fontWeight: 700,
+          letterSpacing: "4px", color: TEXT_PRIMARY, marginBottom: "12px",
+          overflowWrap: "break-word",
+        }}>{PRIVACY_POLICY.title}</h1>
+        <p style={{
+          fontFamily: "'Lato', sans-serif", fontSize: "13px", lineHeight: 1.6,
+          letterSpacing: "2px", color: TEXT_MUTED, marginBottom: "40px",
+        }}>{PRIVACY_POLICY.effectiveDate}</p>
+        <p style={privacyBodyStyle}>{PRIVACY_POLICY.intro}</p>
+        {PRIVACY_POLICY.sections.map((section) => (
+          <section key={section.heading}>
+            <h2 style={{
+              fontFamily: "'Lato', sans-serif", fontSize: "clamp(16px, 3vw, 20px)", fontWeight: 700,
+              letterSpacing: "3px", color: AMBER_BRIGHT, marginTop: "44px", marginBottom: "16px",
+              overflowWrap: "break-word",
+            }}>{section.heading}</h2>
+            {section.paragraphs.map((text, i) => (
+              <p key={i} style={privacyBodyStyle}>{text}</p>
+            ))}
+          </section>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Footer({ navigate }) {
+  // Understated against the crimson social links: this is the one thing in the
+  // footer nobody looks for until they need it. Kept a real anchor so it can be
+  // opened in a new tab, with navigate() taking the plain click.
+  const onPrivacyClick = (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+    e.preventDefault();
+    if (navigate) navigate("/privacy");
+  };
   return (
     <footer style={{
       padding: "40px 32px", borderTop: `1px solid ${BORDER}`,
@@ -1525,7 +1641,7 @@ function Footer() {
         letterSpacing: "3px", color: "#DC143C", textTransform: "uppercase",
         textShadow: "0 0 8px rgba(220,20,60,0.5), 0 0 16px rgba(220,20,60,0.25)",
       }}>© 2026 Time Together</span>
-      <div style={{ display: "flex", gap: "24px" }}>
+      <div style={{ display: "flex", gap: "24px", flexWrap: "wrap", alignItems: "center" }}>
         {[
           { label: "Instagram", href: "https://www.instagram.com/timetogether.prod/" },
           { label: "Email", href: "mailto:jackson@timetogetherprod.com" },
@@ -1540,6 +1656,16 @@ function Footer() {
           onMouseLeave={(e) => { e.target.style.color = "#DC143C"; e.target.style.textShadow = "0 0 8px rgba(220,20,60,0.5), 0 0 16px rgba(220,20,60,0.25)"; }}
           >{label}</a>
         ))}
+        <a href="/privacy" onClick={onPrivacyClick} style={{
+          fontFamily: "'Lato', sans-serif", fontSize: "12px",
+          letterSpacing: "2px", color: TEXT_MUTED, textDecoration: "none",
+          textTransform: "uppercase", transition: "color 0.3s",
+          display: "inline-flex", alignItems: "center",
+          minHeight: "44px", minWidth: "44px", padding: "0 2px",
+        }}
+        onMouseEnter={(e) => { e.target.style.color = TEXT_DIM; }}
+        onMouseLeave={(e) => { e.target.style.color = TEXT_MUTED; }}
+        >Privacy Policy</a>
       </div>
     </footer>
   );
@@ -1551,6 +1677,7 @@ const PATHS = {
   events: "/events",
   archive: "/archive",
   apply: "/apply",
+  privacy: "/privacy",
 };
 
 // Matches on pathname alone, so "/apply?event=halo-varga" still resolves to the
@@ -1608,6 +1735,7 @@ export default function App() {
       // Keyed on the query so switching between two events' forms remounts
       // rather than reusing the first one's resolved event and field state.
       case "apply": return <ApplyPage key={route} />;
+      case "privacy": return <PrivacyPage />;
       default: return <HomePage setPage={changePage} />;
     }
   };
@@ -1617,7 +1745,7 @@ export default function App() {
       <style>{globalCSS}</style>
       <Nav currentPage={page} setPage={changePage} />
       {renderPage()}
-      <Footer />
+      <Footer navigate={changePage} />
     </div>
   );
 }

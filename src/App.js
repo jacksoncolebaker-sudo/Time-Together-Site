@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
 import shakolinPoster from "./shakolin-poster.jpg";
 
 const AMBER = "#8B1A1A";
@@ -168,6 +168,30 @@ const PRIVACY_POLICY = {
     },
   ],
 };
+
+// ============================================
+// SMS TERMS — the /terms page, verbatim. The numbering is the list markup
+// rather than part of the strings, so the items stay plain text: item 3 has
+// its address linkified and item 6 its privacy URL, both at render time.
+// ============================================
+const TERMS = {
+  title: "Time Together SMS Terms and Conditions",
+  effectiveDate: "Effective Date: October 13, 2026",
+  intro: "These terms and conditions apply to messages sent to and from Time Together Productions DBA Time Together.",
+  items: [
+    "By opting in on our event application form, you agree to receive SMS messages from Time Together about our events, including event announcements, event reminders, and ticketing information.",
+    "You can cancel the SMS service at any time. Just text \"STOP\". After you send the SMS message \"STOP\" to us, we will send you an SMS message to confirm that you have been unsubscribed. After this, you will no longer receive SMS messages from us. If you want to join again, send the SMS message \"START\" and we will start sending SMS messages to you again.",
+    "If you are experiencing issues with the messaging program you can reply with the keyword HELP for more assistance, or you can get help directly at ticketing@timetogetherprod.com.",
+    "Carriers are not liable for delayed or undelivered messages.",
+    "As always, message and data rates may apply for any messages sent to you from us and to us from you. Message frequency varies. If you have any questions about your text plan or data plan, it is best to contact your wireless provider.",
+    "If you have any questions regarding privacy, please read our privacy policy: https://timetogetherprod.com/privacy",
+  ],
+};
+
+// The policy URL as item 6 writes it. Kept as its own constant because the
+// renderer splits the item on this exact string to hand the click to the
+// router instead of letting the browser reload the site.
+const PRIVACY_URL = "https://timetogetherprod.com/privacy";
 
 // ============================================
 // APPLICATION FORM SETTINGS
@@ -1505,21 +1529,28 @@ function ApplyPage() {
                   <div id="smsOptIn-error" role="alert" style={applyErrorStyle}>{errors.smsOptIn}</div>
                 )}
 
-                {/* Sits with the opt-in because that is the box it explains. A new
-                    tab on purpose: a half-filled application is not worth losing to
+                {/* Sits with the opt-in because that is the box they explain. New
+                    tabs on purpose: a half-filled application is not worth losing to
                     a policy read, and nothing here clears formData on the way back. */}
-                <a
-                  href="/privacy" target="_blank" rel="noopener noreferrer"
-                  style={{
-                    fontFamily: "'Lato', sans-serif", fontSize: "13px",
-                    letterSpacing: "1px", color: TEXT_MUTED, textDecoration: "none",
-                    display: "inline-flex", alignItems: "center",
-                    minHeight: "44px", minWidth: "44px",
-                    transition: "color 0.3s",
-                  }}
-                  onMouseEnter={(e) => { e.target.style.color = TEXT_DIM; }}
-                  onMouseLeave={(e) => { e.target.style.color = TEXT_MUTED; }}
-                >Privacy Policy</a>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", alignItems: "center" }}>
+                  {[
+                    { label: "Privacy Policy", path: "/privacy" },
+                    { label: "Terms", path: "/terms" },
+                  ].map(({ label, path }) => (
+                    <a
+                      key={path} href={path} target="_blank" rel="noopener noreferrer"
+                      style={{
+                        fontFamily: "'Lato', sans-serif", fontSize: "13px",
+                        letterSpacing: "1px", color: TEXT_MUTED, textDecoration: "none",
+                        display: "inline-flex", alignItems: "center",
+                        minHeight: "44px", minWidth: "44px",
+                        transition: "color 0.3s",
+                      }}
+                      onMouseEnter={(e) => { e.target.style.color = TEXT_DIM; }}
+                      onMouseLeave={(e) => { e.target.style.color = TEXT_MUTED; }}
+                    >{label}</a>
+                  ))}
+                </div>
 
                 {/* Why the button appeared to do nothing. The per-field messages
                     may all be scrolled off by the time the applicant is down
@@ -1578,16 +1609,17 @@ const privacyBodyStyle = {
   color: TEXT_PRIMARY, marginBottom: "18px", overflowWrap: "break-word",
 };
 
-// ─── PRIVACY POLICY PAGE ───
+// ─── POLICY PAGES ───
 // A reading page rather than a landing one: a 720px column, 17px body copy and
 // headings a step quieter than an event title, since the whole page is text and
-// nothing on it is competing for the eye.
-function PrivacyPage() {
+// nothing on it is competing for the eye. The shell is shared by /privacy and
+// /terms; each supplies its own body.
+function PolicyPage({ doc, title, children }) {
   useEffect(() => {
     const previous = document.title;
-    document.title = "Privacy Policy — Time Together";
+    document.title = title;
     return () => { document.title = previous; };
-  }, []);
+  }, [title]);
 
   return (
     <div style={{ minHeight: "100vh", padding: "120px clamp(12px, 4vw, 32px) 80px", position: "relative", overflow: "hidden" }}>
@@ -1598,26 +1630,71 @@ function PrivacyPage() {
           fontFamily: "'Lato', sans-serif", fontSize: "clamp(30px, 5vw, 52px)", fontWeight: 700,
           letterSpacing: "4px", color: TEXT_PRIMARY, marginBottom: "12px",
           overflowWrap: "break-word",
-        }}>{PRIVACY_POLICY.title}</h1>
+        }}>{doc.title}</h1>
         <p style={{
           fontFamily: "'Lato', sans-serif", fontSize: "13px", lineHeight: 1.6,
           letterSpacing: "2px", color: TEXT_MUTED, marginBottom: "40px",
-        }}>{PRIVACY_POLICY.effectiveDate}</p>
-        <p style={privacyBodyStyle}>{PRIVACY_POLICY.intro}</p>
-        {PRIVACY_POLICY.sections.map((section) => (
-          <section key={section.heading}>
-            <h2 style={{
-              fontFamily: "'Lato', sans-serif", fontSize: "clamp(16px, 3vw, 20px)", fontWeight: 700,
-              letterSpacing: "3px", color: AMBER_BRIGHT, marginTop: "44px", marginBottom: "16px",
-              overflowWrap: "break-word",
-            }}>{section.heading}</h2>
-            {section.paragraphs.map((text, i) => (
-              <p key={i} style={privacyBodyStyle}>{text}</p>
-            ))}
-          </section>
-        ))}
+        }}>{doc.effectiveDate}</p>
+        <p style={privacyBodyStyle}>{doc.intro}</p>
+        {children}
       </div>
     </div>
+  );
+}
+
+function PrivacyPage() {
+  return (
+    <PolicyPage doc={PRIVACY_POLICY} title="Privacy Policy — Time Together">
+      {PRIVACY_POLICY.sections.map((section) => (
+        <section key={section.heading}>
+          <h2 style={{
+            fontFamily: "'Lato', sans-serif", fontSize: "clamp(16px, 3vw, 20px)", fontWeight: 700,
+            letterSpacing: "3px", color: AMBER_BRIGHT, marginTop: "44px", marginBottom: "16px",
+            overflowWrap: "break-word",
+          }}>{section.heading}</h2>
+          {section.paragraphs.map((text, i) => (
+            <p key={i} style={privacyBodyStyle}>{text}</p>
+          ))}
+        </section>
+      ))}
+    </PolicyPage>
+  );
+}
+
+// Item 6 quotes the policy URL in full, so the text stays as written and only
+// the click is intercepted — a reload would drop the reader out of the app and
+// back in again. Everything either side goes through linkifyEmails, which is
+// what turns item 3 into a mailto.
+function TermsItem({ text, navigate }) {
+  const openPrivacy = (e) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+    e.preventDefault();
+    if (navigate) navigate("/privacy");
+  };
+  const parts = text.split(PRIVACY_URL);
+  return (
+    <li style={{ ...privacyBodyStyle, marginBottom: "18px", paddingLeft: "6px" }}>
+      {parts.map((part, i) => (
+        <React.Fragment key={i}>
+          {i > 0 && (
+            <a href="/privacy" onClick={openPrivacy} className="apply-mail">{PRIVACY_URL}</a>
+          )}
+          {linkifyEmails(part)}
+        </React.Fragment>
+      ))}
+    </li>
+  );
+}
+
+function TermsPage({ navigate }) {
+  return (
+    <PolicyPage doc={TERMS} title="SMS Terms — Time Together">
+      <ol style={{ paddingLeft: "22px", marginTop: "28px" }}>
+        {TERMS.items.map((text, i) => (
+          <TermsItem key={i} text={text} navigate={navigate} />
+        ))}
+      </ol>
+    </PolicyPage>
   );
 }
 
@@ -1625,10 +1702,10 @@ function Footer({ navigate }) {
   // Understated against the crimson social links: this is the one thing in the
   // footer nobody looks for until they need it. Kept a real anchor so it can be
   // opened in a new tab, with navigate() taking the plain click.
-  const onPrivacyClick = (e) => {
+  const onDocClick = (path) => (e) => {
     if (e.metaKey || e.ctrlKey || e.shiftKey) return;
     e.preventDefault();
-    if (navigate) navigate("/privacy");
+    if (navigate) navigate(path);
   };
   return (
     <footer style={{
@@ -1656,16 +1733,21 @@ function Footer({ navigate }) {
           onMouseLeave={(e) => { e.target.style.color = "#DC143C"; e.target.style.textShadow = "0 0 8px rgba(220,20,60,0.5), 0 0 16px rgba(220,20,60,0.25)"; }}
           >{label}</a>
         ))}
-        <a href="/privacy" onClick={onPrivacyClick} style={{
-          fontFamily: "'Lato', sans-serif", fontSize: "12px",
-          letterSpacing: "2px", color: TEXT_MUTED, textDecoration: "none",
-          textTransform: "uppercase", transition: "color 0.3s",
-          display: "inline-flex", alignItems: "center",
-          minHeight: "44px", minWidth: "44px", padding: "0 2px",
-        }}
-        onMouseEnter={(e) => { e.target.style.color = TEXT_DIM; }}
-        onMouseLeave={(e) => { e.target.style.color = TEXT_MUTED; }}
-        >Privacy Policy</a>
+        {[
+          { label: "Privacy Policy", path: "/privacy" },
+          { label: "Terms", path: "/terms" },
+        ].map(({ label, path }) => (
+          <a key={path} href={path} onClick={onDocClick(path)} style={{
+            fontFamily: "'Lato', sans-serif", fontSize: "12px",
+            letterSpacing: "2px", color: TEXT_MUTED, textDecoration: "none",
+            textTransform: "uppercase", transition: "color 0.3s",
+            display: "inline-flex", alignItems: "center",
+            minHeight: "44px", minWidth: "44px", padding: "0 2px",
+          }}
+          onMouseEnter={(e) => { e.target.style.color = TEXT_DIM; }}
+          onMouseLeave={(e) => { e.target.style.color = TEXT_MUTED; }}
+          >{label}</a>
+        ))}
       </div>
     </footer>
   );
@@ -1678,6 +1760,7 @@ const PATHS = {
   archive: "/archive",
   apply: "/apply",
   privacy: "/privacy",
+  terms: "/terms",
 };
 
 // Matches on pathname alone, so "/apply?event=halo-varga" still resolves to the
@@ -1736,6 +1819,7 @@ export default function App() {
       // rather than reusing the first one's resolved event and field state.
       case "apply": return <ApplyPage key={route} />;
       case "privacy": return <PrivacyPage />;
+      case "terms": return <TermsPage navigate={changePage} />;
       default: return <HomePage setPage={changePage} />;
     }
   };

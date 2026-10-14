@@ -205,6 +205,25 @@ const CONTACT_EMAIL = "ticketing@timetogetherprod.com";
 const APPLY_BUTTON_LABEL = "Ticketing & Details";
 const APPLY_CLOSED_LABEL = "Applications closed";
 
+// The SMS consent wording, verbatim. The card renders it and the submission
+// records it, both from here, so what an applicant agreed to and what is filed
+// against their number can never drift apart.
+const SMS_CONSENT = {
+  label: "Text me about upcoming Time Together events",
+  disclosure: "By checking this box, you agree to receive recurring automated marketing texts from Time Together at the number above. Consent is not required to apply or buy tickets. Msg frequency varies · Msg&data rates may apply · Reply HELP for help · Reply STOP to opt out · SMS Terms · Privacy Policy",
+};
+// The run the disclosure breaks before, and the two document names inside it
+// that become links. Split on rather than rewritten, so the copy above stays
+// the single source of the words.
+const SMS_DISCLOSURE_BREAK = "Msg frequency varies";
+const SMS_DISCLOSURE_LINKS = { "SMS Terms": "/terms", "Privacy Policy": "/privacy" };
+// A step lighter than AMBER_BRIGHT, which sits at 3.6:1 on the consent card —
+// under the 4.5:1 a link has to clear to be read as text. This measures 4.8:1.
+const SMS_LINK = "#D95555";
+// One subtle step up from the form background, so the card reads as a block
+// without becoming a panel.
+const SMS_CARD_BG = "#121212";
+
 // ─── STYLES ───
 const globalCSS = `
   @import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap');
@@ -318,6 +337,41 @@ const globalCSS = `
   }
   .apply-mail:hover, .apply-mail:focus-visible {
     color: ${AMBER_LIGHT};
+  }
+
+  /* SMS consent. A real checkbox with its platform paint removed: an empty
+     square has to read as empty, and the tick has to read as a tick, on every
+     browser. Nothing here transitions or animates — a consent control should
+     not move while it is being read. */
+  .sms-box {
+    appearance: none; -webkit-appearance: none;
+    width: 22px; height: 22px; min-width: 22px; min-height: 22px;
+    margin: 0; flex-shrink: 0; position: relative; cursor: pointer;
+    border: 1.5px solid ${AMBER_BRIGHT};
+    border-radius: 3px;
+    background: transparent;
+  }
+  .sms-box:checked {
+    background: ${AMBER_BRIGHT};
+  }
+  .sms-box:checked::after {
+    content: "";
+    position: absolute; left: 6px; top: 2px;
+    width: 5px; height: 10px;
+    border: solid ${BG_DARK};
+    border-width: 0 2.5px 2.5px 0;
+    transform: rotate(45deg);
+  }
+  .sms-box:focus-visible {
+    outline: 2px solid ${TEXT_PRIMARY};
+    outline-offset: 2px;
+  }
+  /* Underlined as well as coloured, so the two documents are findable without
+     relying on the red alone. */
+  .sms-consent-link {
+    color: ${SMS_LINK};
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
 
   /* Form field boxes. The border lives here rather than in applyInputStyle so
@@ -1067,9 +1121,9 @@ const applyFieldStyle = { marginBottom: "24px" };
 const APPLY_FIELDS = [
   { key: "fullName", label: "Full Name" },
   { key: "email", label: "Email" },
+  { key: "smsOptIn", label: "Phone Number", focusId: "phone" },
   { key: "instagram", label: "Instagram" },
   { key: "pastEvents", label: "Past Events" },
-  { key: "smsOptIn", label: "Phone Number", focusId: "phone" },
 ];
 const joinLabels = (labels) =>
   labels.length < 2
@@ -1079,15 +1133,28 @@ const applyBodyStyle = {
   fontFamily: "'Lato', sans-serif", fontSize: "16px", lineHeight: 1.8,
   color: TEXT_PRIMARY, marginBottom: "16px",
 };
-const applyCheckboxStyle = {
-  width: "24px", height: "24px", minWidth: "24px", minHeight: "24px",
-  fontSize: "16px", accentColor: AMBER, cursor: "pointer", flexShrink: 0,
-  marginTop: "2px",
-};
-const applyCheckboxLabelStyle = {
-  fontFamily: "'Lato', sans-serif", fontSize: "15px", lineHeight: 1.6,
-  color: TEXT_DIM, cursor: "pointer",
-};
+
+// The disclosure, rendered from the one string the payload also sends: a break
+// before the carrier run, and the two document names as links to their pages.
+// Nothing is reworded here — the copy is split on, never rewritten.
+function SmsDisclosure() {
+  const marks = [SMS_DISCLOSURE_BREAK].concat(Object.keys(SMS_DISCLOSURE_LINKS));
+  const parts = SMS_CONSENT.disclosure.split(new RegExp("(" + marks.join("|") + ")"));
+  return parts.map((part, i) => {
+    if (part === SMS_DISCLOSURE_BREAK) {
+      return <React.Fragment key={i}><br />{part}</React.Fragment>;
+    }
+    if (SMS_DISCLOSURE_LINKS[part]) {
+      return (
+        <a
+          key={i} href={SMS_DISCLOSURE_LINKS[part]} target="_blank" rel="noopener noreferrer"
+          className="sms-consent-link"
+        >{part}</a>
+      );
+    }
+    return <React.Fragment key={i}>{part}</React.Fragment>;
+  });
+}
 
 // Splits on an address while keeping it in the result, so any email written in
 // intro copy becomes a mailto link without needing its own data key. Trailing
@@ -1243,6 +1310,12 @@ function ApplyPage() {
 
     setSubmitting(true);
     setSubmitError("");
+    // What was agreed to and when, recorded only when the box is ticked. Both
+    // keys always go out so the sheet columns line up either way.
+    const consentAt = formData.smsOptIn ? new Date().toISOString() : "";
+    const consentText = formData.smsOptIn
+      ? SMS_CONSENT.label + " — " + SMS_CONSENT.disclosure
+      : "";
     try {
       const res = await fetch(FORM_ENDPOINT, {
         method: "POST",
@@ -1262,8 +1335,10 @@ function ApplyPage() {
           // Retired field. The key stays so the sheet's column mapping and the
           // email template keep their shape; drop it once the Apps Script is
           // updated to no longer read it.
-          email_opt_in: false,
+          email_opt_in: "",
           sms_opt_in: formData.smsOptIn,
+          sms_consent_at: consentAt,
+          sms_consent_text: consentText,
         }),
       });
       // Web3Forms can answer 200 with success:false (rejected access key,
@@ -1291,8 +1366,10 @@ function ApplyPage() {
           instagram: formData.instagram,
           past_events: formData.pastEvents,
           references: formData.references,
-          email_opt_in: false, // retired field — see the Web3Forms body above
+          email_opt_in: "", // retired field — see the Web3Forms body above
           sms_opt_in: Boolean(formData.smsOptIn),
+          sms_consent_at: consentAt,
+          sms_consent_text: consentText,
         }),
       }).catch(() => {});
       // Ad blockers strip fbq entirely, so this is guarded twice over: a
@@ -1465,6 +1542,40 @@ function ApplyPage() {
                     {errors.phone && (
                       <div id="phone-error" role="alert" style={applyErrorStyle}>{errors.phone}</div>
                     )}
+
+                    {/* Consent sits with the number it is about. Unticked on load,
+                        never required: an application submits either way. */}
+                    <div style={{
+                      marginTop: "14px", padding: "16px", borderRadius: "10px",
+                      border: "1px solid rgba(139, 26, 26, 0.35)",
+                      background: SMS_CARD_BG,
+                    }}>
+                      <label htmlFor="smsOptIn" style={{
+                        display: "flex", alignItems: "center", gap: "12px",
+                        minHeight: "44px", cursor: "pointer",
+                      }}>
+                        <input
+                          id="smsOptIn" name="smsOptIn" type="checkbox" className="sms-box"
+                          checked={formData.smsOptIn} onChange={update("smsOptIn")}
+                          aria-describedby="sms-disclosure"
+                        />
+                        <span style={{
+                          fontFamily: "'Lato', sans-serif", fontSize: "16px", fontWeight: 500,
+                          lineHeight: 1.5, color: TEXT_PRIMARY,
+                        }}>{SMS_CONSENT.label}</span>
+                      </label>
+                      {/* Outside the label on purpose: the two links in here must
+                          open their page, not toggle the box. Indented to the
+                          label text rather than the checkbox. */}
+                      <p id="sms-disclosure" style={{
+                        fontFamily: "'Lato', sans-serif", fontSize: "14px", lineHeight: 1.55,
+                        color: TEXT_DIM, marginTop: "8px", paddingLeft: "34px",
+                        overflowWrap: "break-word",
+                      }}><SmsDisclosure /></p>
+                    </div>
+                    {errors.smsOptIn && (
+                      <div id="smsOptIn-error" role="alert" style={applyErrorStyle}>{errors.smsOptIn}</div>
+                    )}
                   </div>
 
                   <div style={applyFieldStyle}>
@@ -1514,43 +1625,6 @@ function ApplyPage() {
                   </div>
                 </div>
 
-                {/* Opt-in — off by default */}
-                <div style={{ display: "flex", gap: "12px", marginTop: "32px", marginBottom: "8px" }}>
-                  <input
-                    id="smsOptIn" name="smsOptIn" type="checkbox"
-                    checked={formData.smsOptIn} onChange={update("smsOptIn")}
-                    style={applyCheckboxStyle}
-                  />
-                  <label htmlFor="smsOptIn" style={applyCheckboxLabelStyle}>
-                    Text me about future Time Together events at the number above. Message and data rates may apply. Message frequency varies. Reply STOP to unsubscribe.
-                  </label>
-                </div>
-                {errors.smsOptIn && (
-                  <div id="smsOptIn-error" role="alert" style={applyErrorStyle}>{errors.smsOptIn}</div>
-                )}
-
-                {/* Sits with the opt-in because that is the box they explain. New
-                    tabs on purpose: a half-filled application is not worth losing to
-                    a policy read, and nothing here clears formData on the way back. */}
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "20px", alignItems: "center" }}>
-                  {[
-                    { label: "Privacy Policy", path: "/privacy" },
-                    { label: "Terms", path: "/terms" },
-                  ].map(({ label, path }) => (
-                    <a
-                      key={path} href={path} target="_blank" rel="noopener noreferrer"
-                      style={{
-                        fontFamily: "'Lato', sans-serif", fontSize: "13px",
-                        letterSpacing: "1px", color: TEXT_MUTED, textDecoration: "none",
-                        display: "inline-flex", alignItems: "center",
-                        minHeight: "44px", minWidth: "44px",
-                        transition: "color 0.3s",
-                      }}
-                      onMouseEnter={(e) => { e.target.style.color = TEXT_DIM; }}
-                      onMouseLeave={(e) => { e.target.style.color = TEXT_MUTED; }}
-                    >{label}</a>
-                  ))}
-                </div>
 
                 {/* Why the button appeared to do nothing. The per-field messages
                     may all be scrolled off by the time the applicant is down

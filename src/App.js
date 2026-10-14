@@ -1542,40 +1542,6 @@ function ApplyPage() {
                     {errors.phone && (
                       <div id="phone-error" role="alert" style={applyErrorStyle}>{errors.phone}</div>
                     )}
-
-                    {/* Consent sits with the number it is about. Unticked on load,
-                        never required: an application submits either way. */}
-                    <div style={{
-                      marginTop: "14px", padding: "16px", borderRadius: "10px",
-                      border: "1px solid rgba(139, 26, 26, 0.35)",
-                      background: SMS_CARD_BG,
-                    }}>
-                      <label htmlFor="smsOptIn" style={{
-                        display: "flex", alignItems: "center", gap: "12px",
-                        minHeight: "44px", cursor: "pointer",
-                      }}>
-                        <input
-                          id="smsOptIn" name="smsOptIn" type="checkbox" className="sms-box"
-                          checked={formData.smsOptIn} onChange={update("smsOptIn")}
-                          aria-describedby="sms-disclosure"
-                        />
-                        <span style={{
-                          fontFamily: "'Lato', sans-serif", fontSize: "16px", fontWeight: 500,
-                          lineHeight: 1.5, color: TEXT_PRIMARY,
-                        }}>{SMS_CONSENT.label}</span>
-                      </label>
-                      {/* Outside the label on purpose: the two links in here must
-                          open their page, not toggle the box. Indented to the
-                          label text rather than the checkbox. */}
-                      <p id="sms-disclosure" style={{
-                        fontFamily: "'Lato', sans-serif", fontSize: "14px", lineHeight: 1.55,
-                        color: TEXT_DIM, marginTop: "8px", paddingLeft: "34px",
-                        overflowWrap: "break-word",
-                      }}><SmsDisclosure /></p>
-                    </div>
-                    {errors.smsOptIn && (
-                      <div id="smsOptIn-error" role="alert" style={applyErrorStyle}>{errors.smsOptIn}</div>
-                    )}
                   </div>
 
                   <div style={applyFieldStyle}>
@@ -1625,6 +1591,45 @@ function ApplyPage() {
                   </div>
                 </div>
 
+                {/* Consent comes last, directly above the button, so it is read
+                    with the application finished rather than mid-form. Unticked
+                    on load and never required: submitting is unaffected either
+                    way. The phone field above still points its error here. */}
+                {/* The button carries its own clamp(16px, 3vw, 22px) above it,
+                    so the bottom margin here is the remainder, not the whole gap. */}
+                <div style={{ marginTop: "32px", marginBottom: "16px" }}>
+                  <div style={{
+                    padding: "16px", borderRadius: "10px",
+                    border: "1px solid rgba(139, 26, 26, 0.35)",
+                    background: SMS_CARD_BG,
+                  }}>
+                    <label htmlFor="smsOptIn" style={{
+                      display: "flex", alignItems: "center", gap: "12px",
+                      minHeight: "44px", cursor: "pointer",
+                    }}>
+                      <input
+                        id="smsOptIn" name="smsOptIn" type="checkbox" className="sms-box"
+                        checked={formData.smsOptIn} onChange={update("smsOptIn")}
+                        aria-describedby="sms-disclosure"
+                      />
+                      <span style={{
+                        fontFamily: "'Lato', sans-serif", fontSize: "16px", fontWeight: 500,
+                        lineHeight: 1.5, color: TEXT_PRIMARY,
+                      }}>{SMS_CONSENT.label}</span>
+                    </label>
+                    {/* Outside the label on purpose: the two links in here must
+                        open their page, not toggle the box. Indented to the
+                        label text rather than the checkbox. */}
+                    <p id="sms-disclosure" style={{
+                      fontFamily: "'Lato', sans-serif", fontSize: "14px", lineHeight: 1.55,
+                      color: TEXT_DIM, marginTop: "8px", paddingLeft: "34px",
+                      overflowWrap: "break-word",
+                    }}><SmsDisclosure /></p>
+                  </div>
+                  {errors.smsOptIn && (
+                    <div id="smsOptIn-error" role="alert" style={applyErrorStyle}>{errors.smsOptIn}</div>
+                  )}
+                </div>
 
                 {/* Why the button appeared to do nothing. The per-field messages
                     may all be scrolled off by the time the applicant is down

@@ -99,6 +99,7 @@ const EVENTS = [
         heading: "How this works",
         items: [
           "Tickets will be sent via email (check spam inbox).",
+          { lead: "General sale tickets available now. Early bird tickets are SOLD OUT." },
           "Exact location (Seattle) will be sent to ticket holders at 12pm the day of show.",
         ],
       },

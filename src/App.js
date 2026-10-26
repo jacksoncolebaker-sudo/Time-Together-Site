@@ -94,7 +94,7 @@ const EVENTS = [
     venue: "Private Venue",
     applicationsOpen: true,
     applyIntro: [
-      "Underground savant Shakolin joins us for a night of wonderful music. Natebytheway (SF) and Barcode (KJ3 & Edders) open up the night.",
+      "Panorama bar/Berghain resident, Shakolin, joins us for the night. Natebytheway and Barcode open up the night.",
       {
         heading: "How this works",
         items: [

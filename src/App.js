@@ -68,7 +68,7 @@ const EVENTS = [
       // temporal dead zone at module load.
       {
         lead: "Important:",
-        text: "Emails may land in spam. Add ticketing@timetogetherprod.com to your contacts to avoid this.",
+        text: "Emails may land in spam/promotional inbox. Add ticketing@timetogetherprod.com to your contacts to avoid this.",
       },
     ],
     paymentLink: "",
@@ -108,7 +108,7 @@ const EVENTS = [
       // temporal dead zone at module load.
       {
         lead: "Important:",
-        text: "Emails may land in spam. Add ticketing@timetogetherprod.com to your contacts to avoid this.",
+        text: "Emails may land in spam/promotional inbox. Add ticketing@timetogetherprod.com to your contacts to avoid this.",
       },
     ],
     paymentLink: "", // TODO confirm for shakolin

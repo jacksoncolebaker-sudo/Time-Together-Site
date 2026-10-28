@@ -1464,8 +1464,11 @@ function ApplyPage() {
                   We have sent a confirmation email to{" "}
                   <span style={introAccentStyle}>
                     {formData.email.trim() || "your inbox"}
-                  </span>{" "}
-                  (please check your spam folder for the confirmation email).
+                  </span>
+                  .
+                </p>
+                <p style={{ ...applyBodyStyle, fontWeight: 700 }}>
+                  Please check your spam/promotional inbox for the confirmation email.
                 </p>
                 <p style={applyBodyStyle}>We look forward to seeing you soon.</p>
               </div>

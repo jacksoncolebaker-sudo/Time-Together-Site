@@ -59,7 +59,7 @@ const EVENTS = [
           "Approved applicants will receive a ticket link by email.",
           // Whole line is the accent `lead`, so it stays red now that there is
           // no plain-text half in front of it.
-          { lead: "General sale tickets available now." },
+          { lead: "General sale tickets AVAILABLE NOW." },
           "Exact location (Seattle) will be sent to ticket holders 24 hours before doors.",
         ],
       },
@@ -99,7 +99,7 @@ const EVENTS = [
         heading: "How this works",
         items: [
           "Tickets will be sent via email (check spam inbox).",
-          "General sale tickets available now. Early bird tickets are sold out.",
+          "General sale tickets AVAILABLE NOW. Early bird tickets are sold out.",
           "Exact location (Seattle) will be sent to ticket holders at 12pm the day of show.",
         ],
       },

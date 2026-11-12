@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
-import shakolinPoster from "./shakolin-poster.jpg";
 
 const AMBER = "#8B1A1A";
 const AMBER_LIGHT = "#A62626";
@@ -92,7 +91,7 @@ const EVENTS = [
     date: "Oct 30th, 2026",
     dateISO: "2026-10-30",
     venue: "Private Venue",
-    applicationsOpen: true,
+    applicationsOpen: false,
     applyIntro: [
       "Panorama bar/Berghain resident, Shakolin, joins us for the night. Natebytheway and Barcode open up the night.",
       {
@@ -112,7 +111,7 @@ const EVENTS = [
       },
     ],
     paymentLink: "", // TODO confirm for shakolin
-    past: false,
+    past: true,
     cardDate: "OCT 30",
     day: "FRI",
     artists: ["Sherman"], // TODO confirm for shakolin
@@ -121,8 +120,47 @@ const EVENTS = [
     // rather than scanned. Keep the two in step.
     timeLabel: "10pm to 6am",
     ticketLink: null, // TODO confirm for shakolin
-    poster: shakolinPoster,
-    posterAlt: "Shakolin with Natebytheway and Barcode (KJ3 & Edders) — A Divine Time Together Vol. II, October 30th, 2026, private location, 22:00 to 06:00",
+    // Poster retired with the event. The archive renders the text card, which
+    // reads cardDate/day/artists/time instead.
+    poster: null,
+    posterAlt: null,
+  },
+  {
+    id: "liquid-earth",
+    title: "Liquid Earth",
+    date: "Dec 5th, 2026",
+    dateISO: "2026-12-05",
+    venue: "Private Venue",
+    applicationsOpen: true,
+    applyIntro: [
+      "Underground king Liquid Earth joins us. Support by Flores, Soraya, & Chance Sands.",
+      {
+        heading: "How this works",
+        items: [
+          "Ticket link will be sent via email.",
+          "Exact location (Seattle) will be sent to ticket holders at 7pm the day of show.",
+        ],
+      },
+      // The address is spelled out rather than read from CONTACT_EMAIL: that
+      // constant is declared below EVENTS, so referencing it here would hit the
+      // temporal dead zone at module load.
+      {
+        lead: "Important:",
+        text: "Emails may land in spam/promotional inbox. Add ticketing@timetogetherprod.com to your contacts to avoid this.",
+      },
+    ],
+    paymentLink: "",
+    past: false,
+    cardDate: "DEC 5",
+    day: "SAT",
+    artists: ["Flores", "Soraya", "Chance Sands"],
+    time: "22:00 - 05:00",
+    // Prose form of `time` for the apply page header, where the line is read
+    // rather than scanned. Keep the two in step.
+    timeLabel: "10pm to 5am",
+    ticketLink: null,
+    poster: null,
+    posterAlt: null,
   },
 ];
 

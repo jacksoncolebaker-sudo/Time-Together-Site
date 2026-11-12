@@ -440,11 +440,11 @@ const globalCSS = `
   }
 
   /* Section label inside the description — the site's small-caps treatment,
-     kept at full text colour because this is primary copy. */
+     in the same red as the "Important:" lead so the accents match. */
   .apply-intro-heading {
     font-family: 'Lato', sans-serif;
     font-size: 12px; font-weight: 700; letter-spacing: 3px;
-    text-transform: uppercase; color: ${TEXT_PRIMARY};
+    text-transform: uppercase; color: ${AMBER_BRIGHT};
     margin-top: 28px; margin-bottom: 14px;
   }
   /* Body-sized: these are terms the applicant needs to read, not fine print. */

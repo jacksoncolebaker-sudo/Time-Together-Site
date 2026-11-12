@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect, useRef } from "react";
+import liquidEarthPoster from "./liquid-earth-poster.jpg";
 
 const AMBER = "#8B1A1A";
 const AMBER_LIGHT = "#A62626";
@@ -159,8 +160,8 @@ const EVENTS = [
     // rather than scanned. Keep the two in step.
     timeLabel: "10pm to 5am",
     ticketLink: null,
-    poster: null,
-    posterAlt: null,
+    poster: liquidEarthPoster,
+    posterAlt: "Liquid Earth with Chance Sands, Soraya and Flores — A Divine Time Together Vol. III, December 5th, 2026, private location, 10pm to 5am",
   },
 ];
 

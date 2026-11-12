@@ -802,7 +802,7 @@ function useSingleLineTitle(text) {
 function EventCard({ evt, index = 0, onClick, navigate }) {
   return evt.poster
     ? <PosterEventCard evt={evt} index={index} onClick={onClick} navigate={navigate} />
-    : <TypesetEventCard evt={evt} index={index} onClick={onClick} />;
+    : <TypesetEventCard evt={evt} index={index} onClick={onClick} navigate={navigate} />;
 }
 
 // The card shell — translucent pane, gradient edge, breathing glow. Both card
@@ -870,8 +870,14 @@ function PosterEventCard({ evt, index, onClick, navigate }) {
   );
 }
 
-function TypesetEventCard({ evt, index = 0, onClick }) {
+function TypesetEventCard({ evt, index = 0, onClick, navigate }) {
   const titleRef = useSingleLineTitle(evt.title);
+  // Same box as PosterEventCard, so an open event without a poster still has
+  // a way into its application. Archive entries are closed and skip it.
+  const openApply = (e) => {
+    e.stopPropagation();
+    if (navigate) navigate(`/apply?event=${evt.id}`);
+  };
   return (
     <CardShell index={index} onClick={onClick}>
       <h3 ref={titleRef} className="evt-title" style={{
@@ -942,6 +948,12 @@ function TypesetEventCard({ evt, index = 0, onClick }) {
           }}>{evt.venue} &nbsp;·&nbsp; {evt.time}</div>
         </div>
       </div>
+      {evt.applicationsOpen && (
+        <button type="button" className="evt-details" onClick={openApply}
+          style={{ alignSelf: "center" }}>
+          {APPLY_BUTTON_LABEL}
+        </button>
+      )}
     </CardShell>
   );
 }
